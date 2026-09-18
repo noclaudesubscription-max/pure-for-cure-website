@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pure for Cure — Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --saffron: #E8670A; --gold: #F5A623; --dark: #130C02;
+      --border: #E8D5B7; --bg: #F7F4EF; --card: #fff;
+      --text: #1C1007; --muted: #7A5C3A;
+      --green: #16a34a; --red: #dc2626; --amber: #d97706;
+      --sidebar-w: 240px; --radius: 10px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+    input, textarea, select { font-family: inherit; }
+
+    /* ── LOGIN ── */
+    #loginScreen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #130C02 0%, #1C1007 100%);
+    }
+    .login-card {
+      background: #fff; border-radius: 16px; padding: 48px 40px;
+      width: 100%; max-width: 400px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.35);
+    }
+    .login-brand { text-align: center; margin-bottom: 36px; }
+    .login-logo { display: block; font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--saffron); font-weight: 700; margin-bottom: 6px; }
+    .login-sub { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; }
+    .pw-wrap { position: relative; }
+    .pw-wrap input { padding-right: 44px; }
+    .toggle-pw { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.9rem; }
+    .toggle-pw:hover { color: var(--saffron); }
+    .login-error { color: var(--red); font-size: 0.82rem; min-height: 20px; margin-bottom: 8px; }
+    .btn-login {
+      width: 100%; padding: 13px; background: var(--saffron); color: #fff;
+      border-radius: 8px; font-weight: 700; font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-login:hover { background: #C85A08; transform: translateY(-1px); }
+    .login-hint { text-align: center; font-size: 0.78rem; color: var(--muted); margin-top: 20px; }
+    .login-hint code { background: #f0ebe3; padding: 2px 6px; border-radius: 4px; }
+
+    /* ── LAYOUT ── */
+    #dashboard { display: flex; min-height: 100vh; }
+
+    /* ── SIDEBAR ── */
+    #sidebar {
+      width: var(--sidebar-w); background: var(--dark);
+      min-height: 100vh; position: fixed; top: 0; left: 0;
+      display: flex; flex-direction: column; z-index: 100; overflow-y: auto;
+    }
+    .sb-brand { display: flex; align-items: center; gap: 12px; padding: 22px 18px 18px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .sb-icon { width: 40px; height: 40px; background: var(--saffron); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .sb-name { font-family: 'Playfair Display', serif; font-size: 0.9rem; color: #fff; font-weight: 700; line-height: 1.2; }
+    .sb-role { font-size: 0.68rem; color: rgba(255,255,255,0.38); text-transform: uppercase; letter-spacing: 0.09em; }
+    .sb-nav { flex: 1; padding: 14px 10px; display: flex; flex-direction: column; gap: 2px; }
+    .sb-link {
+      display: flex; align-items: center; gap: 11px; padding: 10px 12px;
+      border-radius: 8px; font-size: 0.845rem; font-weight: 500;
+      color: rgba(255,255,255,0.5); transition: all 0.2s; cursor: pointer;
+    }
+    .sb-link:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+    .sb-link.active { background: rgba(232,103,10,0.22); color: var(--gold); }
+    .sb-link i { width: 18px; text-align: center; font-size: 0.88rem; }
+    .sb-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 8px 10px; }
+    .sb-logout { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border-radius: 8px; font-size: 0.845rem; font-weight: 500; color: rgba(255,120,120,0.65); transition: all 0.2s; width: 100%; }
+    .sb-logout:hover { background: rgba(220,38,38,0.12); color: #ff6b6b; }
+    .sb-logout i { width: 18px; text-align: center; }
+
+    /* ── MAIN ── */
+    #mainArea { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { background: #fff; border-bottom: 1px solid var(--border); padding: 15px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+    .topbar-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; }
+    .topbar-badge { display: inline-flex; align-items: center; gap: 6px; background: #f0ebe3; border: 1px solid var(--border); padding: 4px 12px; border-radius: 100px; font-size: 0.72rem; color: var(--muted); font-weight: 500; }
+    .dash-section { display: none; padding: 24px 28px; }
+    .dash-section.active { display: block; }
+
+    /* ── CARDS ── */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; margin-bottom: 18px; }
+    .card-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px; }
+    .card-title { font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 7px; }
+    .card-title i { color: var(--saffron); }
+    .card-actions { display: flex; gap: 7px; flex-wrap: wrap; }
+
+    /* ── BUTTONS ── */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 7px; font-weight: 600; font-size: 0.82rem; transition: all 0.18s; cursor: pointer; white-space: nowrap; }
+    .btn-primary { background: var(--saffron); color: #fff; border: 2px solid var(--saffron); }
+    .btn-primary:hover { background: #C85A08; border-color: #C85A08; }
+    .btn-outline { background: transparent; color: var(--text); border: 2px solid var(--border); }
+    .btn-outline:hover { border-color: var(--saffron); color: var(--saffron); }
+    .btn-danger { background: #fef2f2; color: var(--red); border: 2px solid #fecaca; }
+    .btn-danger:hover { background: var(--red); color: #fff; border-color: var(--red); }
+    .btn-success { background: #f0fdf4; color: var(--green); border: 2px solid #86efac; }
+    .btn-success:hover { background: var(--green); color: #fff; border-color: var(--green); }
+    .btn-sm { padding: 5px 11px; font-size: 0.76rem; }
+    .btn-icon { padding: 6px 8px; }
+
+    /* ── FIELDS ── */
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 6px; }
+    .field input, .field select, .field textarea { width: 100%; padding: 9px 12px; border: 2px solid var(--border); border-radius: 7px; font-size: 0.875rem; color: var(--text); background: #fff; transition: border-color 0.2s; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--saffron); }
+    .field input[type="file"] { padding: 7px; background: var(--bg); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* ── NOTICE ── */
+    .notice { display: flex; gap: 10px; align-items: flex-start; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; font-size: 0.8rem; color: #92400e; margin-bottom: 18px; }
+    .notice i { color: #f59e0b; flex-shrink: 0; margin-top: 1px; }
+    .notice.blue { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
+    .notice.blue i { color: #3b82f6; }
+
+    /* ── LOC TABS ── */
+    .loc-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .loc-tab { padding: 6px 14px; border-radius: 100px; font-size: 0.78rem; font-weight: 600; border: 2px solid var(--border); color: var(--muted); background: #fff; cursor: pointer; transition: all 0.18s; }
+    .loc-tab.active { background: var(--saffron); border-color: var(--saffron); color: #fff; }
+    .loc-tab:hover:not(.active) { border-color: var(--saffron); color: var(--saffron); }
+
+    /* ── ENTRY LIST ── */
+    .entry-list { display: flex; flex-direction: column; gap: 10px; }
+    .entry-card { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; transition: border-color 0.2s; }
+    .entry-card:hover { border-color: var(--saffron); }
+    .entry-av { width: 42px; height: 42px; background: linear-gradient(135deg, var(--saffron), var(--gold)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 0.82rem; flex-shrink: 0; }
+    .entry-info { flex: 1; min-width: 0; }
+    .entry-name { font-weight: 600; font-size: 0.88rem; }
+    .entry-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+    .entry-actions { display: flex; gap: 5px; flex-shrink: 0; }
+    .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
+    .empty-state i { font-size: 2.2rem; opacity: 0.25; display: block; margin-bottom: 12px; }
+    .empty-state p { font-size: 0.85rem; }
+
+    /* ── STATS ── */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+    .stat-box { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+    .stat-num { font-family: 'Inter', sans-serif; font-size: 1.75rem; font-weight: 700; color: var(--saffron); }
+    .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 3px; }
+
+    /* ── TABLE ── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    thead th { padding: 9px 13px; background: var(--bg); border-bottom: 2px solid var(--border); text-align: left; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); white-space: nowrap; }
+    tbody td { padding: 11px 13px; border-bottom: 1px solid var(--border); }
+    tbody tr:hover td { background: #faf6f0; }
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 100px; font-size: 0.68rem; font-weight: 700; }
+    .badge-success { background: #f0fdf4; color: #16a34a; }
+    .badge-failed { background: #fef2f2; color: #dc2626; }
+    .badge-pending { background: #fffbeb; color: #d97706; }
+
+    /* ── SEARCH ── */
+    .search-bar { display: flex; gap: 9px; margin-bottom: 14px; flex-wrap: wrap; }
+    .search-input { flex: 1; min-width: 180px; padding: 8px 13px; border: 2px solid var(--border); border-radius: 7px; font-size: 0.845rem; color: var(--text); transition: border-color 0.2s; }
+    .search-input:focus { outline: none; border-color: var(--saffron); }
+
+    /* ── QR ── */
+    .qr-wrap { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; }
+    .qr-preview { width: 190px; height: 190px; border: 3px dashed var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--bg); overflow: hidden; flex-shrink: 0; }
+    .qr-preview img { width: 100%; height: 100%; object-fit: contain; }
+    .qr-placeholder { text-align: center; color: var(--muted); }
+    .qr-placeholder i { font-size: 2.8rem; opacity: 0.25; display: block; margin-bottom: 8px; }
+    .qr-placeholder p { font-size: 0.78rem; }
+
+    /* ── PHOTO URLS ── */
+    .photo-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 8px; }
+    .photo-row { display: flex; gap: 6px; align-items: center; }
+    .photo-row input { flex: 1; }
+
+    /* ── DONOR CHIPS ── */
+    .chip-preview-wrap { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; padding: 14px 16px; background: #1C1007; border-radius: 8px; }
+    .chip-dark { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; padding: 5px 13px; font-size: 0.78rem; color: rgba(255,255,255,0.75); }
+    .chip-dark span { font-weight: 600; color: #fff; }
+
+    /* ── CODE BLOCK ── */
+    .code-block { background: #1C1007; color: var(--gold); font-family: 'Courier New', monospace; font-size: 0.75rem; padding: 16px; border-radius: 8px; overflow: auto; max-height: 280px; white-space: pre; margin-top: 10px; }
+
+    /* ── TOAST ── */
+    #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px); background: #1C1007; color: #fff; padding: 10px 24px; border-radius: 100px; font-size: 0.845rem; font-weight: 500; box-shadow: 0 8px 32px rgba(0,0,0,0.22); opacity: 0; transition: opacity 0.28s, transform 0.28s; z-index: 9999; pointer-events: none; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast .ti { font-size: 0.85rem; }
+    #toast .ti.ok { color: #22c55e; }
+    #toast .ti.err { color: #ef4444; }
+    #toast .ti.info { color: var(--gold); }
+
+    /* ── MODAL ── */
+    #modal { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: 20px; }
+    #modal.open { display: flex; }
+    .modal-box { background: #fff; border-radius: 14px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 80px rgba(0,0,0,0.25); }
+    .modal-hd { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px 14px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: #fff; z-index: 1; }
+    .modal-hd h3 { font-weight: 700; font-size: 1rem; }
+    .modal-close-btn { width: 30px; height: 30px; border-radius: 7px; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: background 0.2s; font-size: 0.85rem; }
+    .modal-close-btn:hover { background: var(--bg); }
+    .modal-body { padding: 18px 22px; }
+    .modal-ft { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 9px; }
+
+    /* ── TOGGLE SWITCH ── */
+    .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #d8cdb8; transition: 0.2s; border-radius: 24px; }
+    .toggle-slider::before { content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; transition: 0.2s; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.25); }
+    .toggle-switch input:checked + .toggle-slider { background: var(--green); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
+    .toggle-switch input:disabled + .toggle-slider { opacity: 0.5; cursor: not-allowed; }
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .toggle-row-label { font-size: 0.8rem; color: var(--muted); margin-top: 4px; max-width: 480px; }
+
+    /* ── BANNER MANAGEMENT ── */
+    .banner-mgmt-card .card-title { flex-wrap: wrap; }
+    .banner-order-badge { font-size: 0.68rem; font-weight: 700; color: var(--muted); background: var(--bg); border: 1px solid var(--border); padding: 2px 8px; border-radius: 100px; margin-left: 4px; }
+    .banner-mgmt-card.is-disabled { opacity: 0.6; }
+    .banner-preview-wrap { width: 160px; height: 84px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: var(--bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+    .bn-mobile-placeholder-icon { font-size: 1.4rem; color: var(--border); }
+    .banner-preview-empty { border-style: dashed; }
+    .banner-preview-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .banner-image-row { display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; }
+    .banner-image-fields { flex: 1; min-width: 220px; }
+
+    @media (max-width: 900px) {
+      :root { --sidebar-w: 56px; }
+      .sb-name, .sb-role, .sb-link span, .sb-logout span { display: none; }
+      .sb-brand { padding: 14px 8px; justify-content: center; }
+      .sb-icon { margin: 0; }
+      .sb-nav { padding: 10px 6px; }
+      .sb-link { justify-content: center; padding: 10px; }
+      .sb-link i { width: auto; }
+      .sb-logout { justify-content: center; padding: 10px; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .dash-section { padding: 16px; }
+      .banner-image-row { flex-direction: column; }
+      .banner-preview-wrap { width: 100%; height: 140px; }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+</head>
+<body>
+
+<!-- ══ LOGIN ══════════════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-brand">
+      <span class="login-logo">Pure for Cure</span>
+      <span class="login-sub">Admin Dashboard</span>
+    </div>
+    <form id="loginForm">
+      <div class="field">
+        <label>Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="passwordInput" placeholder="Enter admin password" autocomplete="current-password" />
+          <button type="button" class="toggle-pw" id="togglePw"><i class="fas fa-eye"></i></button>
+        </div>
+      </div>
+      <div class="login-error" id="loginError"></div>
+      <button type="submit" class="btn-login">Sign In &nbsp;<i class="fas fa-arrow-right"></i></button>
+    </form>
+    <p class="login-hint">Default password: <code>pfc@2024</code></p>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══════════════════════════════════════ -->
+<div id="dashboard" style="display:none">
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-icon">PFC</div>
+      <div><div class="sb-name">Pure for Cure</div><div class="sb-role">Admin</div></div>
+    </div>
+    <nav class="sb-nav">
+      <button class="sb-link active" data-sec="gallery"><i class="fas fa-images"></i><span>Gallery Manager</span></button>
+      <button class="sb-link" data-sec="banners"><i class="fas fa-photo-film"></i><span>Banners</span></button>
+      <button class="sb-link" data-sec="donors"><i class="fas fa-heart"></i><span>Recent Donors</span></button>
+      <button class="sb-link" data-sec="payments"><i class="fas fa-wallet"></i><span>Payments</span></button>
+      <button class="sb-link" data-sec="volunteers"><i class="fas fa-hands-helping"></i><span>Volunteers</span></button>
+    </nav>
+    <div style="padding:10px">
+      <div class="sb-divider"></div>
+      <button class="sb-link" data-sec="settings"><i class="fas fa-cog"></i><span>Settings</span></button>
+      <a class="sb-link" href="index.html" target="_blank" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:8px;font-size:0.845rem;font-weight:500;color:rgba(255,255,255,0.5);transition:all 0.2s;"><i class="fas fa-external-link-alt"></i><span>View Site</span></a>
+      <button class="sb-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></button>
+    </div>
+  </aside>
+
+  <!-- Main Area -->
+  <div id="mainArea">
+    <header class="topbar">
+      <h1 class="topbar-title" id="topbarTitle">Gallery Manager</h1>
+      <span class="topbar-badge" id="topbarBadge"><i class="fas fa-circle" style="color:#22c55e;font-size:7px;margin-right:4px"></i> Supabase (live)</span>
+    </header>
+
+    <!-- ── GALLERY ─────────────────────────── -->
+    <section id="sec-gallery" class="dash-section active">
+      <div class="notice">
+        <i class="fas fa-lightbulb"></i>
+        <span>Entries saved here go straight to the database — changes are <strong>live for every visitor immediately</strong>, no extra steps needed. You can upload photo files directly, or paste a URL.</span>
+      </div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title"><i class="fas fa-map-marker-alt"></i> Location</div>
+        </div>
+        <div class="loc-tabs" id="locTabs">
+          <button class="loc-tab" data-loc="general">General Gallery (Homepage)</button>
+          <button class="loc-tab active" data-loc="borooah">B. Borooah Cancer Hospital</button>
+          <button class="loc-tab" data-loc="gmch">GMCH – Guwahati Medical College</button>
+          <button class="loc-tab" data-loc="aiims">AIIMS Guwahati</button>
+          <button class="loc-tab" data-loc="assam-flood-relief">Assam Flood Relief</button>
+          <button class="loc-tab" data-loc="other">Other Locations</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title"><i class="fas fa-users"></i> Entries — <span id="locLabel">B. Borooah Cancer Hospital</span></div>
+          <div class="card-actions">
+            <button class="btn btn-outline btn-sm" id="exportGalleryBtn"><i class="fas fa-code"></i> Export Code</button>
+            <button class="btn btn-primary btn-sm" id="addEntryBtn"><i class="fas fa-plus"></i> <span id="addEntryBtnLabel">Add Entry</span></button>
+          </div>
+        </div>
+        <div id="entryList"></div>
+      </div>
+    </section>
+
+    <!-- ── BANNERS ─────────────────────────── -->
+    <section id="sec-banners" class="dash-section">
+      <div class="notice">
+        <i class="fas fa-lightbulb"></i>
+        <span>Controls the homepage banner carousel. Changes save straight to the database and appear on the homepage immediately — no code edits needed.</span>
+      </div>
+
+      <div class="card">
+        <div class="toggle-row">
+          <div>
+            <div class="card-title" style="margin-bottom:4px"><i class="fas fa-eye"></i> Show Homepage Banners</div>
+            <p class="toggle-row-label">Master switch. Turn this off to completely hide the banner carousel on the homepage — the page content below it moves up normally, no empty gap.</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="masterBannerToggle" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="card-hd" style="border-bottom:none;margin-bottom:12px;padding-bottom:0">
+        <div class="card-title"><i class="fas fa-photo-film"></i> Banner Slots</div>
+        <div class="card-actions">
+          <button class="btn btn-primary btn-sm" id="addBannerBtn"><i class="fas fa-plus"></i> Add Banner</button>
+        </div>
+      </div>
+
+      <div id="bannerCardsList"></div>
+    </section>
+
+    <!-- ── VOLUNTEERS ──────────────────────── -->
+    <section id="sec-volunteers" class="dash-section">
+      <div class="notice">
+        <i class="fas fa-lightbulb"></i>
+        <span>Everyone who registers as a volunteer on the <strong>Donate</strong> page shows up here automatically.</span>
+      </div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title"><i class="fas fa-hands-helping"></i> Registered Volunteers</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Date</th><th>Name</th><th>Contact</th><th>Area</th><th>Message</th><th></th>
+            </tr></thead>
+            <tbody id="volTable"></tbody>
+          </table>
+        </div>
+        <div id="volEmpty" class="empty-state" style="display:none">
+          <i class="fas fa-hands-helping"></i><p>No volunteer registrations yet.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── RECENT DONORS ───────────────────── -->
+    <section id="sec-donors" class="dash-section">
+      <div class="notice">
+        <i class="fas fa-lightbulb"></i>
+        <span>Manage the donor names shown in the <strong>Recent Donors strip</strong> on the main site. Use <strong>Export Code</strong> to make it permanent.</span>
+      </div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title"><i class="fas fa-eye"></i> Live Preview</div>
+          <button class="btn btn-outline btn-sm" id="exportDonorsBtn"><i class="fas fa-code"></i> Export Code</button>
+        </div>
+        <div class="chip-preview-wrap" id="chipPreview"></div>
+        <div class="card-hd" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);border-bottom:none;margin-bottom:10px">
+          <div class="card-title"><i class="fas fa-list"></i> Manage Entries</div>
+          <button class="btn btn-primary btn-sm" id="addDonorBtn"><i class="fas fa-plus"></i> Add Donor</button>
+        </div>
+        <div id="donorList"></div>
+      </div>
+    </section>
+
+    <!-- ── PAYMENTS ────────────────────────── -->
+    <section id="sec-payments" class="dash-section">
+      <div class="stats-row" id="payStats"></div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title"><i class="fas fa-wallet"></i> Payment Records</div>
+          <div class="card-actions">
+            <button class="btn btn-success btn-sm" id="exportCsvBtn"><i class="fas fa-file-csv"></i> Export CSV</button>
+            <button class="btn btn-primary btn-sm" id="addPayBtn"><i class="fas fa-plus"></i> Add Payment</button>
+          </div>
+        </div>
+        <div class="search-bar">
+          <input class="search-input" type="text" id="paySearch" placeholder="Search name, email, amount, txn ID…" />
+          <select class="search-input" id="payLocFilter" style="max-width:200px;flex:unset">
+            <option value="">All Locations</option>
+            <option value="borooah">B. Borooah</option>
+            <option value="gmch">GMCH</option>
+            <option value="aiims">AIIMS Guwahati</option>
+            <option value="assam-flood-relief">Assam Flood Relief</option>
+            <option value="orphanage">Old Age Homes/Orphanage</option>
+            <option value="other">Other</option>
+          </select>
+          <select class="search-input" id="payStatusFilter" style="max-width:160px;flex:unset">
+            <option value="">All Statuses</option>
+            <option value="Success">Success</option>
+            <option value="Pending">Pending</option>
+            <option value="Failed">Failed</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Date</th><th>Donor</th><th>Amount</th><th>Location</th>
+              <th>Method</th><th>Status</th><th>Txn ID</th><th>Receipt</th><th></th>
+            </tr></thead>
+            <tbody id="payTable"></tbody>
+          </table>
+        </div>
+        <div id="payEmpty" class="empty-state" style="display:none">
+          <i class="fas fa-receipt"></i><p>No payment records yet. Click <strong>Add Payment</strong> to get started.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SETTINGS ────────────────────────── -->
+    <section id="sec-settings" class="dash-section">
+      <div class="card">
+        <div class="card-hd"><div class="card-title"><i class="fas fa-lock"></i> Change Password</div></div>
+        <div style="max-width:380px">
+          <div class="field"><label>Current Password</label><input type="password" id="curPw" /></div>
+          <div class="field"><label>New Password</label><input type="password" id="newPw" /></div>
+          <div class="field"><label>Confirm New Password</label><input type="password" id="confPw" /></div>
+          <button class="btn btn-primary" id="changePwBtn"><i class="fas fa-key"></i> Update Password</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title"><i class="fas fa-database"></i> Clear Data</div></div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px">Permanently remove data from localStorage. This cannot be undone.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-danger btn-sm" onclick="clearData('gallery')"><i class="fas fa-images"></i> Gallery Data</button>
+          <button class="btn btn-danger btn-sm" onclick="clearData('payments')"><i class="fas fa-wallet"></i> Payments</button>
+          <button class="btn btn-danger btn-sm" onclick="clearData('donors')"><i class="fas fa-heart"></i> Recent Donors</button>
+          <button class="btn btn-danger btn-sm" onclick="clearData('volunteers')"><i class="fas fa-hands-helping"></i> Volunteers</button>
+          <button class="btn btn-danger" onclick="clearData('all')"><i class="fas fa-trash-alt"></i> Clear Everything</button>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /mainArea -->
+</div><!-- /dashboard -->
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Modal -->
+<div id="modal">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <h3 id="mTitle"></h3>
+      <button class="modal-close-btn" id="mClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="mBody"></div>
+    <div class="modal-ft" id="mFoot"></div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   CONSTANTS
+════════════════════════════════════════════ */
+const DEFAULT_PW = 'pfc@2024';
+const LS = {
+  pw:        'pfc_password',
+  auth:      'pfc_auth',
+  donors:    'pfc_recent_donors',
+  pays:      'pfc_payments',
+  volunteers:'pfc_volunteers',
+};
+const LOCS = {
+  general:   'General Gallery (Homepage)',
+  borooah:   'B. Barooah Cancer Institute',
+  gmch:      'Guwahati Medical College & Hospital',
+  aiims:     'AIIMS, Guwahati',
+  'assam-flood-relief': 'Assam Flood Relief',
+  orphanage: 'Old Age Homes/Orphanage',
+  other:     'Other Locations'
+};
+const TITLES = {
+  gallery: 'Gallery Manager',
+  donors: 'Recent Donors', payments: 'Payment Records', volunteers: 'Volunteers', settings: 'Settings'
+};
+
+/* ════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const uid = () => Math.random().toString(36).slice(2, 10);
+const lsGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
+const lsSet = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function toast(msg, type = 'info') {
+  const el = $('toast'), icons = { ok:'✓', err:'✗', info:'i' };
+  el.innerHTML = `<span class="ti ${type}">${icons[type]||'i'}</span> ${msg}`;
+  el.className = 'show';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.className = '', 3000);
+}
+
+/* ════════════════════════════════════════════
+   AUTH
+════════════════════════════════════════════ */
+const getPw = () => localStorage.getItem(LS.pw) || DEFAULT_PW;
+
+$('loginForm').addEventListener('submit', e => {
+  e.preventDefault();
+  if ($('passwordInput').value === getPw()) {
+    lsSet(LS.auth, true);
+    $('loginScreen').style.display = 'none';
+    $('dashboard').style.display = 'flex';
+    boot();
+  } else {
+    $('loginError').textContent = 'Incorrect password. Please try again.';
+    $('passwordInput').select();
+  }
+});
+
+$('togglePw').addEventListener('click', () => {
+  const i = $('passwordInput');
+  i.type = i.type === 'password' ? 'text' : 'password';
+  $('togglePw').querySelector('i').className = i.type === 'text' ? 'fas fa-eye-slash' : 'fas fa-eye';
+});
+
+$('logoutBtn').addEventListener('click', () => {
+  localStorage.removeItem(LS.auth);
+  $('dashboard').style.display = 'none';
+  $('loginScreen').style.display = 'flex';
+  $('passwordInput').value = '';
+  $('loginError').textContent = '';
+});
+
+/* ════════════════════════════════════════════
+   NAVIGATION — event delegation on sidebar
+════════════════════════════════════════════ */
+document.getElementById('sidebar').addEventListener('click', function(e) {
+  const link = e.target.closest('[data-sec]');
+  if (!link) return;
+
+  const sec = link.getAttribute('data-sec');
+  if (!sec) return;
+
+  // Active link highlight
+  document.querySelectorAll('.sb-link').forEach(function(x) { x.classList.remove('active'); });
+  link.classList.add('active');
+
+  // Show correct section
+  document.querySelectorAll('.dash-section').forEach(function(x) { x.classList.remove('active'); });
+  var target = document.getElementById('sec-' + sec);
+  if (target) target.classList.add('active');
+
+  // Update page title
+  var titleMap = { gallery:'Gallery Manager', banners:'Banners', donors:'Recent Donors', payments:'Payment Records', volunteers:'Volunteers', settings:'Settings' };
+  var titleEl = document.getElementById('topbarTitle');
+  if (titleEl) titleEl.textContent = titleMap[sec] || sec;
+
+  if (sec === 'payments') loadPays();
+  if (sec === 'volunteers') loadVolunteers();
+  if (sec === 'banners') loadBanners();
+});
+
+/* ════════════════════════════════════════════
+   BOOT
+════════════════════════════════════════════ */
+function boot() {
+  renderEntries();
+  renderDonors();
+  loadPays();
+  loadVolunteers();
+  loadBanners();
+}
+
+/* ════════════════════════════════════════════
+   GALLERY MANAGER
+════════════════════════════════════════════ */
+let curLoc = 'borooah';
+
+$('locTabs').addEventListener('click', e => {
+  const t = e.target.closest('.loc-tab');
+  if (!t) return;
+  document.querySelectorAll('.loc-tab').forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  curLoc = t.dataset.loc;
+  $('locLabel').textContent = LOCS[curLoc];
+  $('addEntryBtnLabel').textContent = curLoc === 'general' ? 'Add Photo' : 'Add Entry';
+  renderEntries();
+});
+
+/* All gallery data lives in Supabase (table: gallery_entries) so edits
+   made here are visible to every visitor immediately — no Export Code
+   step needed. Photos uploaded via the file picker go to the 'gallery'
+   storage bucket and the resulting public URL is stored in `photos`. */
+let entriesCache = [];
+
+async function fetchEntries(loc) {
+  const { data, error } = await sb.from('gallery_entries')
+    .select('*').eq('location', loc)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: true });
+  if (error) { toast('Failed to load gallery: ' + error.message, 'err'); return []; }
+  return data || [];
+}
+
+async function uploadToGallery(file) {
+  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  const path = `${Date.now()}-${uid()}.${ext}`;
+  const { error } = await sb.storage.from('gallery').upload(path, file);
+  if (error) throw error;
+  const { data } = sb.storage.from('gallery').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+/* Delegate change events for any '.pu-upload' file input inside the modal —
+   works for both the single general-gallery upload and the dynamic
+   per-row uploads in the donor entry modal. */
+$('modal').addEventListener('change', async (e) => {
+  const fileInput = e.target.closest('.pu-upload');
+  if (!fileInput || !fileInput.files.length) return;
+  const targetInput = fileInput.closest('[data-upload-row]')?.querySelector('.pu-target');
+  if (!targetInput) return;
+  const file = fileInput.files[0];
+  const label = fileInput.closest('label');
+  const originalHTML = label.innerHTML;
+  label.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  try {
+    targetInput.value = await uploadToGallery(file);
+    toast('Photo uploaded!', 'ok');
+  } catch (err) {
+    toast('Upload failed: ' + err.message, 'err');
+  } finally {
+    label.innerHTML = originalHTML;
+    fileInput.value = '';
+  }
+});
+
+async function renderEntries() {
+  $('entryList').innerHTML = `<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading…</p></div>`;
+  entriesCache = await fetchEntries(curLoc);
+
+  if (curLoc === 'general') {
+    if (!entriesCache.length) {
+      $('entryList').innerHTML = `<div class="empty-state"><i class="fas fa-images"></i><p>No photos yet in the General Gallery.<br>Click <strong>Add Photo</strong> to begin.</p></div>`;
+      return;
+    }
+    $('entryList').innerHTML = `<div class="entry-list">${entriesCache.map(p => {
+      const src = (p.photos && p.photos[0]) || '';
+      return `<div class="entry-card">
+        <div class="entry-av" style="padding:0;overflow:hidden"><img src="${esc(src)}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.opacity=0.2" /></div>
+        <div class="entry-info">
+          <div class="entry-name">${esc(p.caption || 'Untitled photo')}</div>
+          <div class="entry-meta">${esc(src)}</div>
+        </div>
+        <div class="entry-actions">
+          <button class="btn btn-outline btn-sm btn-icon" onclick="openPhotoModal('${p.id}')"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-danger btn-sm btn-icon" onclick="delEntry('${p.id}')"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>`;
+    }).join('')}</div>`;
+    return;
+  }
+
+  if (!entriesCache.length) {
+    $('entryList').innerHTML = `<div class="empty-state"><i class="fas fa-images"></i><p>No entries yet for ${esc(LOCS[curLoc])}.<br>Click <strong>Add Entry</strong> to begin.</p></div>`;
+    return;
+  }
+  $('entryList').innerHTML = `<div class="entry-list">${entriesCache.map(e => {
+    const init = (e.initials || (e.name||'').split(' ').map(w=>w[0]).join('')).slice(0,2).toUpperCase();
+    return `<div class="entry-card">
+      <div class="entry-av">${esc(init)}</div>
+      <div class="entry-info">
+        <div class="entry-name">${esc(e.name)}</div>
+        <div class="entry-meta">${esc(e.date_label||'')}${e.date_iso?` · ${e.date_iso}`:''} · ${(e.photos||[]).length} photo${(e.photos||[]).length!==1?'s':''}${curLoc==='other'&&e.specific_location?` · ${esc(e.specific_location)}`:''}</div>
+      </div>
+      <div class="entry-actions">
+        <button class="btn btn-outline btn-sm btn-icon" onclick="openEntryModal('${e.id}')"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="delEntry('${e.id}')"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+$('addEntryBtn').addEventListener('click', () => curLoc === 'general' ? openPhotoModal() : openEntryModal());
+$('exportGalleryBtn').addEventListener('click', () => {
+  const rows = entriesCache.map(e => curLoc === 'general'
+    ? { name: e.caption, date: 'Recent Seva Day', photos: e.photos }
+    : { name: e.name, date: e.date_label, dateISO: e.date_iso||'', photos: e.photos, location: e.specific_location||'' }
+  );
+  openCodeModal(
+    `Snapshot: ${LOCS[curLoc]}`,
+    `const donations = ${JSON.stringify(rows, null, 2)};`,
+    `This gallery is already live for every visitor via Supabase — you don't need this. It's here only if you want a manual backup/snapshot of the current entries.`
+  );
+});
+
+function openPhotoModal(id = null) {
+  const p = id ? entriesCache.find(x => x.id === id) : null;
+  const src = p ? (p.photos && p.photos[0]) || '' : '';
+  openModal(id ? 'Edit Photo' : 'Add Photo', `
+    <div class="field">
+      <label>Photo URL / File Path *</label>
+      <div style="display:flex;gap:8px" data-upload-row>
+        <input type="text" id="pSrc" class="pu-target" value="${esc(src)}" placeholder="images/example.jpg" style="flex:1" />
+        <label class="btn btn-outline btn-sm btn-icon" title="Upload photo" style="cursor:pointer">
+          <i class="fas fa-upload"></i>
+          <input type="file" accept="image/*" class="pu-upload" style="display:none" />
+        </label>
+      </div>
+    </div>
+    <div class="field"><label>Caption / Alt Text</label><input type="text" id="pAlt" value="${esc(p?.caption||'')}" placeholder="Volunteers serving meals" /></div>`,
+    `<button class="btn btn-outline" id="mCancel">Cancel</button>
+     <button class="btn btn-primary" id="mSave"><i class="fas fa-save"></i> ${id ? 'Save Changes' : 'Add Photo'}</button>`
+  );
+  $('mCancel').addEventListener('click', closeModal);
+  $('mSave').addEventListener('click', async () => {
+    const srcVal = $('pSrc').value.trim();
+    if (!srcVal) { toast('Add a photo URL or upload a file', 'err'); return; }
+    const row = { location: 'general', caption: $('pAlt').value.trim(), photos: [srcVal] };
+    const { error } = p
+      ? await sb.from('gallery_entries').update(row).eq('id', p.id)
+      : await sb.from('gallery_entries').insert(row);
+    if (error) { toast('Save failed: ' + error.message, 'err'); return; }
+    toast(p ? 'Photo updated!' : 'Photo added!', 'ok');
+    renderEntries();
+    closeModal();
+  });
+}
+
+function openEntryModal(id = null) {
+  const en = id ? entriesCache.find(e => e.id === id) : null;
+  const photos = en ? en.photos : [''];
+
+  const photoRows = photos.map((u, i) => `
+    <div class="photo-row" data-pr data-upload-row>
+      <input type="text" class="pu pu-target" value="${esc(u)}" placeholder="URL or upload a file" />
+      <label class="btn btn-outline btn-sm btn-icon" title="Upload photo" style="cursor:pointer">
+        <i class="fas fa-upload"></i>
+        <input type="file" accept="image/*" class="pu-upload" style="display:none" />
+      </label>
+      ${i > 0 ? `<button type="button" class="btn btn-danger btn-sm btn-icon" onclick="this.closest('[data-pr]').remove()"><i class="fas fa-times"></i></button>` : ''}
+    </div>`).join('');
+
+  openModal(id ? 'Edit Donor Entry' : 'Add Donor Entry', `
+    <div class="grid-2">
+      <div class="field"><label>Donor Name *</label><input type="text" id="eName" value="${esc(en?.name||'')}" placeholder="Ramesh & Family" /></div>
+      <div class="field"><label>Initials (auto if blank)</label><input type="text" id="eInit" maxlength="2" value="${esc(en?.initials||'')}" placeholder="RF" /></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Display Date</label><input type="text" id="eDate" value="${esc(en?.date_label||'')}" placeholder="15 March 2025" /></div>
+      <div class="field"><label>ISO Date (for calendar)</label><input type="date" id="eDateISO" value="${en?.date_iso||''}" /></div>
+    </div>
+    ${curLoc==='other'?`<div class="field"><label>Specific Location</label><input type="text" id="eLoc" value="${esc(en?.specific_location||'')}" placeholder="Shishu Bhavan Orphanage" /></div>`:''}
+    <div class="field">
+      <label>Photo URLs / File Paths *</label>
+      <div class="photo-list" id="photoList">${photoRows}</div>
+      <button type="button" class="btn btn-outline btn-sm" id="addPhotoBtn" style="margin-top:6px"><i class="fas fa-plus"></i> Add Photo</button>
+    </div>`,
+    `<button class="btn btn-outline" id="mCancel">Cancel</button>
+     <button class="btn btn-primary" id="mSave"><i class="fas fa-save"></i> ${id ? 'Save Changes' : 'Add Entry'}</button>`
+  );
+
+  $('eDateISO').addEventListener('change', () => {
+    if (!$('eDate').value) {
+      const d = new Date($('eDateISO').value + 'T00:00:00');
+      $('eDate').value = d.toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' });
+    }
+  });
+  $('addPhotoBtn').addEventListener('click', () => {
+    const r = document.createElement('div');
+    r.className='photo-row'; r.setAttribute('data-pr',''); r.setAttribute('data-upload-row','');
+    r.innerHTML=`<input type="text" class="pu pu-target" placeholder="URL or upload a file" />
+      <label class="btn btn-outline btn-sm btn-icon" title="Upload photo" style="cursor:pointer"><i class="fas fa-upload"></i><input type="file" accept="image/*" class="pu-upload" style="display:none" /></label>
+      <button type="button" class="btn btn-danger btn-sm btn-icon" onclick="this.closest('[data-pr]').remove()"><i class="fas fa-times"></i></button>`;
+    $('photoList').appendChild(r);
+  });
+  $('mCancel').addEventListener('click', closeModal);
+  $('mSave').addEventListener('click', async () => {
+    const name = $('eName').value.trim();
+    if (!name) { toast('Please enter a name', 'err'); return; }
+    const photos = [...document.querySelectorAll('.pu-target')].map(i=>i.value.trim()).filter(Boolean);
+    if (!photos.length) { toast('Add at least one photo URL or upload', 'err'); return; }
+    const row = {
+      location: curLoc, name,
+      initials: $('eInit').value.trim().toUpperCase() || '',
+      date_label: $('eDate').value.trim() || 'Date not set',
+      date_iso: $('eDateISO').value || null,
+      photos,
+      specific_location: curLoc === 'other' ? ($('eLoc')?.value.trim() || '') : ''
+    };
+    const { error } = en
+      ? await sb.from('gallery_entries').update(row).eq('id', en.id)
+      : await sb.from('gallery_entries').insert(row);
+    if (error) { toast('Save failed: ' + error.message, 'err'); return; }
+    toast(en ? 'Entry updated!' : 'Entry added!', 'ok');
+    renderEntries();
+    closeModal();
+  });
+}
+
+async function delEntry(id) {
+  if (!confirm('Delete this entry? This cannot be undone.')) return;
+  const { error } = await sb.from('gallery_entries').delete().eq('id', id);
+  if (error) { toast('Delete failed: ' + error.message, 'err'); return; }
+  renderEntries();
+  toast('Deleted','info');
+}
+
+/* ════════════════════════════════════════════
+   BANNERS
+   Controls the homepage banner carousel. All data
+   lives in Supabase (tables: banners, site_settings)
+   so the homepage always reflects what's saved here.
+════════════════════════════════════════════ */
+const MAX_BANNER_IMAGE_MB = 5;
+const ALLOWED_BANNER_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+let bannersCache = [];
+
+async function loadBannerMasterToggle() {
+  try {
+    const { data, error } = await sb.from('site_settings').select('value').eq('key', 'homepage_banner_enabled').maybeSingle();
+    if (error) throw error;
+    $('masterBannerToggle').checked = data ? data.value === 'true' : true;
+  } catch (err) {
+    $('masterBannerToggle').checked = true;
+  }
+}
+
+$('masterBannerToggle').addEventListener('change', async (e) => {
+  const val = e.target.checked ? 'true' : 'false';
+  const { error } = await sb.from('site_settings').upsert({ key: 'homepage_banner_enabled', value: val, updated_at: new Date().toISOString() });
+  if (error) { toast('Failed to save: ' + error.message, 'err'); e.target.checked = !e.target.checked; return; }
+  toast(e.target.checked ? 'Homepage banners turned ON' : 'Homepage banners turned OFF', 'ok');
+});
+
+async function loadBanners() {
+  loadBannerMasterToggle();
+  const { data, error } = await sb.from('banners').select('*').order('sort_order', { ascending: true });
+  if (error) { toast('Failed to load banners: ' + error.message, 'err'); return; }
+  bannersCache = data || [];
+  renderBannerCards();
+}
+
+function isValidLinkUrl(url) {
+  if (!url) return true; // optional field
+  if (url.includes('://')) return /^https?:\/\//i.test(url);
+  return !/\s/.test(url); // relative link — just reject whitespace
+}
+
+function renderBannerCards() {
+  const wrap = $('bannerCardsList');
+  if (!bannersCache.length) {
+    wrap.innerHTML = `<div class="empty-state"><i class="fas fa-photo-film"></i><p>No banners yet. Click <strong>Add Banner</strong> to create your first slide.</p></div>`;
+    return;
+  }
+  wrap.innerHTML = bannersCache.map((b, i) => `
+    <div class="card banner-mgmt-card${b.enabled ? '' : ' is-disabled'}" data-id="${b.id}">
+      <div class="card-hd">
+        <div class="card-title"><i class="fas fa-image"></i> Banner ${i + 1} <span class="banner-order-badge">${b.enabled ? 'ON — visible on homepage' : 'OFF — hidden'}</span></div>
+        <div class="card-actions">
+          <label class="toggle-switch" title="Enable/disable this banner">
+            <input type="checkbox" class="bn-enabled" ${b.enabled ? 'checked' : ''} />
+            <span class="toggle-slider"></span>
+          </label>
+          <button class="btn btn-outline btn-sm btn-icon bn-up" title="Move up" ${i === 0 ? 'disabled' : ''}><i class="fas fa-arrow-up"></i></button>
+          <button class="btn btn-outline btn-sm btn-icon bn-down" title="Move down" ${i === bannersCache.length - 1 ? 'disabled' : ''}><i class="fas fa-arrow-down"></i></button>
+          <button class="btn btn-danger btn-sm btn-icon bn-delete" title="Delete banner"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+
+      <div class="field"><label>Title</label><input type="text" class="bn-title" value="${esc(b.title || '')}" placeholder="e.g. Assam Flood Relief (used for admin reference and image alt text)" /></div>
+
+      <div class="field">
+        <label>Desktop Banner</label>
+        <div class="banner-image-row">
+          <div class="banner-preview-wrap"><img class="bn-preview" src="${esc(b.image_url || '')}" alt="" onerror="this.style.opacity=0.15" /></div>
+          <div class="banner-image-fields">
+            <div style="display:flex;gap:8px;margin-bottom:6px">
+              <input type="text" class="bn-image-url" value="${esc(b.image_url || '')}" placeholder="Image URL, or upload a file" style="flex:1" />
+              <label class="btn btn-outline btn-sm" style="cursor:pointer;white-space:nowrap"><i class="fas fa-upload"></i> Upload
+                <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" class="bn-upload" style="display:none" />
+              </label>
+            </div>
+            <span style="font-size:0.72rem;color:var(--muted)">JPG, PNG or WebP · up to ${MAX_BANNER_IMAGE_MB}MB · shown on desktop, tablet, and on mobile if no mobile banner is set</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Mobile Banner <span style="text-transform:none;font-weight:500;color:var(--muted)">(optional)</span></label>
+        <div class="banner-image-row">
+          <div class="banner-preview-wrap${b.mobile_image_url ? '' : ' banner-preview-empty'}"><img class="bn-mobile-preview" src="${esc(b.mobile_image_url || '')}" alt="" style="${b.mobile_image_url ? '' : 'display:none'}" onerror="this.style.opacity=0.15" /><i class="fas fa-mobile-screen-button bn-mobile-placeholder-icon" style="${b.mobile_image_url ? 'display:none' : ''}"></i></div>
+          <div class="banner-image-fields">
+            <div style="display:flex;gap:8px;margin-bottom:6px">
+              <input type="text" class="bn-mobile-image-url" value="${esc(b.mobile_image_url || '')}" placeholder="Optional — image URL, or upload a file" style="flex:1" />
+              <label class="btn btn-outline btn-sm" style="cursor:pointer;white-space:nowrap"><i class="fas fa-upload"></i> Upload
+                <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" class="bn-mobile-upload" style="display:none" />
+              </label>
+              <button type="button" class="btn btn-outline btn-sm btn-icon bn-mobile-remove" title="Remove mobile banner"><i class="fas fa-times"></i></button>
+            </div>
+            <span style="font-size:0.72rem;color:var(--muted)">Used on phones only. Leave blank to reuse the Desktop Banner on mobile.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field"><label>Banner Link (optional)</label><input type="text" class="bn-link" value="${esc(b.link_url || '')}" placeholder="https://example.com/donate or donate.html — leave blank for a non-clickable banner" /></div>
+
+      <div class="card-actions" style="justify-content:flex-end">
+        <button class="btn btn-primary btn-sm bn-save"><i class="fas fa-save"></i> Save Changes</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+$('addBannerBtn').addEventListener('click', async () => {
+  const nextOrder = bannersCache.length ? Math.max(...bannersCache.map(b => b.sort_order)) + 1 : 0;
+  const { error } = await sb.from('banners').insert({ title: '', image_url: '', link_url: '', enabled: false, sort_order: nextOrder });
+  if (error) { toast('Failed to add banner: ' + error.message, 'err'); return; }
+  toast('Banner added — add an image and turn it on when ready', 'ok');
+  loadBanners();
+});
+
+async function uploadBannerImage(file) {
+  if (!ALLOWED_BANNER_TYPES.includes(file.type)) throw new Error('Please upload a JPG, PNG, or WebP image.');
+  if (file.size > MAX_BANNER_IMAGE_MB * 1024 * 1024) throw new Error(`Image must be under ${MAX_BANNER_IMAGE_MB}MB.`);
+  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  const path = `${Date.now()}-${uid()}.${ext}`;
+  const { error } = await sb.storage.from('banners').upload(path, file);
+  if (error) throw error;
+  const { data } = sb.storage.from('banners').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+// Best-effort cleanup: only removes files that actually live in our own
+// 'banners' storage bucket (pasted external URLs are left untouched).
+async function deleteBannerStorageFile(url) {
+  if (!url) return;
+  const marker = '/storage/v1/object/public/banners/';
+  const idx = url.indexOf(marker);
+  if (idx === -1) return;
+  const path = url.slice(idx + marker.length);
+  try { await sb.storage.from('banners').remove([path]); } catch (err) { /* non-fatal */ }
+}
+
+function setMobilePreview(card, url) {
+  const wrap = card.querySelector('.bn-mobile-preview').closest('.banner-preview-wrap');
+  const img = card.querySelector('.bn-mobile-preview');
+  const icon = card.querySelector('.bn-mobile-placeholder-icon');
+  if (url) {
+    img.src = url; img.style.display = ''; icon.style.display = 'none';
+    wrap.classList.remove('banner-preview-empty');
+  } else {
+    img.src = ''; img.style.display = 'none'; icon.style.display = '';
+    wrap.classList.add('banner-preview-empty');
+  }
+}
+
+$('bannerCardsList').addEventListener('change', async (e) => {
+  // Desktop image upload
+  if (e.target.classList.contains('bn-upload') && e.target.files.length) {
+    const card = e.target.closest('.banner-mgmt-card');
+    const label = e.target.closest('label');
+    const originalHTML = label.innerHTML;
+    label.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    try {
+      const url = await uploadBannerImage(e.target.files[0]);
+      card.querySelector('.bn-image-url').value = url;
+      card.querySelector('.bn-preview').src = url;
+      toast('Image uploaded — click Save Changes to apply', 'ok');
+    } catch (err) {
+      toast(err.message || 'Upload failed', 'err');
+    } finally {
+      label.innerHTML = originalHTML;
+      e.target.value = '';
+    }
+    return;
+  }
+  // Mobile image upload
+  if (e.target.classList.contains('bn-mobile-upload') && e.target.files.length) {
+    const card = e.target.closest('.banner-mgmt-card');
+    const label = e.target.closest('label');
+    const originalHTML = label.innerHTML;
+    label.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    try {
+      const url = await uploadBannerImage(e.target.files[0]);
+      card.querySelector('.bn-mobile-image-url').value = url;
+      setMobilePreview(card, url);
+      toast('Mobile image uploaded — click Save Changes to apply', 'ok');
+    } catch (err) {
+      toast(err.message || 'Upload failed', 'err');
+    } finally {
+      label.innerHTML = originalHTML;
+      e.target.value = '';
+    }
+    return;
+  }
+  // Live-update preview when a URL is pasted
+  if (e.target.classList.contains('bn-image-url')) {
+    const card = e.target.closest('.banner-mgmt-card');
+    card.querySelector('.bn-preview').src = e.target.value.trim();
+    return;
+  }
+  if (e.target.classList.contains('bn-mobile-image-url')) {
+    const card = e.target.closest('.banner-mgmt-card');
+    setMobilePreview(card, e.target.value.trim());
+    return;
+  }
+  // Enable/disable toggle — saves immediately
+  if (e.target.classList.contains('bn-enabled')) {
+    const card = e.target.closest('.banner-mgmt-card');
+    const id = card.dataset.id;
+    const enabled = e.target.checked;
+    const { error } = await sb.from('banners').update({ enabled, updated_at: new Date().toISOString() }).eq('id', id);
+    if (error) { toast('Failed to save: ' + error.message, 'err'); e.target.checked = !enabled; return; }
+    const b = bannersCache.find(x => x.id === id);
+    if (b) b.enabled = enabled;
+    card.classList.toggle('is-disabled', !enabled);
+    card.querySelector('.banner-order-badge').textContent = enabled ? 'ON — visible on homepage' : 'OFF — hidden';
+    toast(enabled ? 'Banner turned on' : 'Banner turned off', 'ok');
+  }
+});
+
+$('bannerCardsList').addEventListener('click', async (e) => {
+  const card = e.target.closest('.banner-mgmt-card');
+  if (!card) return;
+  const id = card.dataset.id;
+
+  if (e.target.closest('.bn-save')) {
+    const title = card.querySelector('.bn-title').value.trim();
+    const imageUrl = card.querySelector('.bn-image-url').value.trim();
+    const mobileImageUrl = card.querySelector('.bn-mobile-image-url').value.trim();
+    const linkUrl = card.querySelector('.bn-link').value.trim();
+    if (!imageUrl) { toast('Add a desktop image URL or upload a file before saving', 'err'); return; }
+    if (!isValidLinkUrl(linkUrl)) { toast('Banner link looks invalid — use a full https:// URL or a relative page path', 'err'); return; }
+    const prev = bannersCache.find(b => b.id === id);
+    const { error } = await sb.from('banners').update({
+      title, image_url: imageUrl, mobile_image_url: mobileImageUrl, link_url: linkUrl, updated_at: new Date().toISOString()
+    }).eq('id', id);
+    if (error) { toast('Save failed: ' + error.message, 'err'); return; }
+    // Clean up replaced files in our own storage bucket (best-effort, after save succeeds)
+    if (prev && prev.image_url && prev.image_url !== imageUrl) deleteBannerStorageFile(prev.image_url);
+    if (prev && prev.mobile_image_url && prev.mobile_image_url !== mobileImageUrl) deleteBannerStorageFile(prev.mobile_image_url);
+    toast('Banner saved!', 'ok');
+    loadBanners();
+    return;
+  }
+
+  if (e.target.closest('.bn-mobile-remove')) {
+    const prev = bannersCache.find(b => b.id === id);
+    const { error } = await sb.from('banners').update({ mobile_image_url: '', updated_at: new Date().toISOString() }).eq('id', id);
+    if (error) { toast('Failed to remove: ' + error.message, 'err'); return; }
+    if (prev && prev.mobile_image_url) deleteBannerStorageFile(prev.mobile_image_url);
+    card.querySelector('.bn-mobile-image-url').value = '';
+    setMobilePreview(card, '');
+    if (prev) prev.mobile_image_url = '';
+    toast('Mobile banner removed — desktop banner will be used on mobile', 'ok');
+    return;
+  }
+
+  if (e.target.closest('.bn-delete')) {
+    if (!confirm('Delete this banner? This cannot be undone.')) return;
+    const prev = bannersCache.find(b => b.id === id);
+    const { error } = await sb.from('banners').delete().eq('id', id);
+    if (error) { toast('Delete failed: ' + error.message, 'err'); return; }
+    if (prev) {
+      if (prev.image_url) deleteBannerStorageFile(prev.image_url);
+      if (prev.mobile_image_url) deleteBannerStorageFile(prev.mobile_image_url);
+    }
+    toast('Banner deleted', 'info');
+    loadBanners();
+    return;
+  }
+
+  if (e.target.closest('.bn-up') || e.target.closest('.bn-down')) {
+    const dir = e.target.closest('.bn-up') ? -1 : 1;
+    const idx = bannersCache.findIndex(b => b.id === id);
+    const swapIdx = idx + dir;
+    if (swapIdx < 0 || swapIdx >= bannersCache.length) return;
+    const a = bannersCache[idx], b = bannersCache[swapIdx];
+    const [aOrder, bOrder] = [a.sort_order, b.sort_order];
+    const { error } = await sb.from('banners').update({ sort_order: bOrder }).eq('id', a.id);
+    const { error: error2 } = !error ? await sb.from('banners').update({ sort_order: aOrder }).eq('id', b.id) : {};
+    if (error || error2) { toast('Failed to reorder: ' + (error || error2).message, 'err'); return; }
+    loadBanners();
+  }
+});
+
+/* ════════════════════════════════════════════
+   VOLUNTEERS
+════════════════════════════════════════════ */
+let volsCache = [];
+
+async function loadVolunteers() {
+  try {
+    const { data, error } = await sb.from('volunteers').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    volsCache = data || [];
+  } catch (err) {
+    volsCache = lsGet(LS.volunteers) || [];
+  }
+  renderVolunteers();
+}
+
+function renderVolunteers() {
+  const v = volsCache;
+  $('volEmpty').style.display = v.length === 0 ? 'block' : 'none';
+  $('volTable').innerHTML = v.map(x => `<tr>
+      <td style="white-space:nowrap">${esc(x.date||'—')}</td>
+      <td><strong>${esc(x.name)}</strong></td>
+      <td style="font-size:0.8rem">${esc(x.email||'—')}${x.phone?`<br><small style="color:var(--muted)">${esc(x.phone)}</small>`:''}</td>
+      <td style="font-size:0.8rem">${esc(x.area||'—')}</td>
+      <td style="font-size:0.8rem;color:var(--muted)">${esc(x.message||'—')}</td>
+      <td><button class="btn btn-danger btn-sm btn-icon" onclick="delVolunteer('${x.id}')"><i class="fas fa-trash"></i></button></td>
+    </tr>`).join('');
+}
+
+async function delVolunteer(id) {
+  if (!confirm('Delete this volunteer registration?')) return;
+  try {
+    await sb.from('volunteers').delete().eq('id', id);
+  } catch (err) {}
+  await loadVolunteers();
+  toast('Volunteer removed','info');
+}
+
+/* ════════════════════════════════════════════
+   RECENT DONORS
+════════════════════════════════════════════ */
+const defaultDonors = () => [
+  { id: uid(), name: 'Harsh Kumar Giri', amount: '₹500' },
+  { id: uid(), name: 'Harsh Kumar Giri', amount: '₹300' },
+  { id: uid(), name: 'Santana Haloi',    amount: '₹800' }
+];
+const getDonors = () => lsGet(LS.donors) || defaultDonors();
+const saveDonors = d => lsSet(LS.donors, d);
+
+function renderDonors() {
+  const d = getDonors();
+  $('chipPreview').innerHTML = d.map(x => `<span class="chip-dark"><span>${esc(x.name)}</span> — ${esc(x.amount)}</span>`).join('') +
+    `<span class="chip-dark" style="border:1px dashed rgba(255,255,255,0.2);opacity:0.5">+ Be the next</span>`;
+  $('donorList').innerHTML = !d.length
+    ? `<div class="empty-state"><i class="fas fa-heart"></i><p>No donors yet.</p></div>`
+    : `<div class="entry-list">${d.map((x, i) => `
+      <div class="entry-card">
+        <div class="entry-info"><div class="entry-name">${esc(x.name)}</div><div class="entry-meta">${esc(x.amount)}</div></div>
+        <div class="entry-actions">
+          ${i > 0 ? `<button class="btn btn-outline btn-sm btn-icon" onclick="moveDonor('${x.id}',-1)"><i class="fas fa-arrow-up"></i></button>` : ''}
+          ${i < d.length-1 ? `<button class="btn btn-outline btn-sm btn-icon" onclick="moveDonor('${x.id}',1)"><i class="fas fa-arrow-down"></i></button>` : ''}
+          <button class="btn btn-danger btn-sm btn-icon" onclick="delDonor('${x.id}')"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>`).join('')}</div>`;
+}
+
+$('addDonorBtn').addEventListener('click', () => {
+  openModal('Add Recent Donor',
+    `<div class="field"><label>Donor Name *</label><input type="text" id="dName" placeholder="Ramesh Kumar" /></div>
+     <div class="field"><label>Amount *</label><input type="text" id="dAmt" placeholder="₹500" /></div>`,
+    `<button class="btn btn-outline" id="mCancel">Cancel</button>
+     <button class="btn btn-primary" id="mSave"><i class="fas fa-plus"></i> Add Donor</button>`
+  );
+  $('mCancel').addEventListener('click', closeModal);
+  $('mSave').addEventListener('click', () => {
+    const name = $('dName').value.trim(), amt = $('dAmt').value.trim();
+    if (!name || !amt) { toast('Both fields are required', 'err'); return; }
+    const d = getDonors();
+    d.unshift({ id: uid(), name, amount: amt.startsWith('₹') ? amt : `₹${amt}` });
+    saveDonors(d); renderDonors(); closeModal(); toast('Donor added!', 'ok');
+  });
+});
+
+function moveDonor(id, dir) {
+  const d = getDonors(), i = d.findIndex(x => x.id === id), j = i + dir;
+  if (j < 0 || j >= d.length) return;
+  [d[i], d[j]] = [d[j], d[i]]; saveDonors(d); renderDonors();
+}
+function delDonor(id) {
+  saveDonors(getDonors().filter(x => x.id !== id)); renderDonors(); toast('Donor removed', 'info');
+}
+
+$('exportDonorsBtn').addEventListener('click', () => {
+  const chips = getDonors().map(d =>
+    `\n          <div class="donor-chip"><span>${esc(d.name)}</span> — ${esc(d.amount)}</div>`
+  ).join('');
+  openCodeModal('Export Recent Donors HTML',
+    `<!-- Replace the .donors-list div content in index.html with this: -->
+<div class="donors-list">${chips}
+          <div class="donor-chip add-chip"><a href="#donate"><i class="fas fa-plus"></i> Be the next</a></div>
+        </div>`,
+    'Find the <code>.donors-list</code> div inside the Donate section of <strong>index.html</strong> and replace its contents.'
+  );
+});
+
+/* ════════════════════════════════════════════
+   PAYMENTS
+════════════════════════════════════════════ */
+let paysCache = [];
+
+async function loadPays() {
+  try {
+    const { data, error } = await sb.from('donations').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    paysCache = data || [];
+  } catch (err) {
+    paysCache = lsGet(LS.pays) || [];
+  }
+  renderPays();
+  renderPayStats();
+}
+
+function renderPayStats() {
+  const p = paysCache;
+  const total = p.reduce((s, x) => s + (parseFloat(x.amount) || 0), 0);
+  $('payStats').innerHTML = [
+    ['₹' + total.toLocaleString('en-IN'), 'Total Collected'],
+    [p.length, 'Total Transactions'],
+    [p.filter(x=>x.status==='Success').length, 'Successful'],
+    [p.filter(x=>x.status==='Pending').length, 'Pending']
+  ].map(([n,l], i) => `<div class="stat-box"><div class="stat-num" style="${i===2?'color:var(--green)':i===3?'color:var(--amber)':''}">${n}</div><div class="stat-label">${l}</div></div>`).join('');
+}
+
+function renderPays() {
+  const q = $('paySearch')?.value || '', loc = $('payLocFilter')?.value || '', st = $('payStatusFilter')?.value || '';
+  const all = paysCache;
+  const rows = all.filter(p => {
+    const txt = [p.name, p.email, String(p.amount), p.txn_id].join(' ').toLowerCase();
+    return (!q || txt.includes(q.toLowerCase())) && (!loc || p.location===loc) && (!st || p.status===st);
+  });
+  $('payEmpty').style.display = all.length === 0 ? 'block' : 'none';
+  $('payTable').innerHTML = rows.length === 0 && all.length > 0
+    ? `<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:28px">No results match your search.</td></tr>`
+    : rows.map(p => { const m = /Receipt:\s*(\S+)/.exec(p.notes || ''); const receiptUrl = m ? m[1] : ''; return `<tr>
+      <td style="white-space:nowrap">${p.date}</td>
+      <td><strong>${esc(p.name)}</strong>${p.email?`<br><small style="color:var(--muted)">${esc(p.email)}</small>`:''}</td>
+      <td><strong>₹${parseFloat(p.amount).toLocaleString('en-IN')}</strong></td>
+      <td style="font-size:0.78rem">${esc(LOCS[p.location]||p.location||'—')}</td>
+      <td>${esc(p.method||'—')}</td>
+      <td><span class="badge badge-${(p.status||'').toLowerCase()}">${esc(p.status)}</span></td>
+      <td style="font-size:0.75rem;color:var(--muted)">${esc(p.txn_id||'—')}</td>
+      <td>${receiptUrl ? `<a href="${esc(receiptUrl)}" target="_blank" rel="noopener" class="btn btn-sm btn-icon" title="View receipt"><i class="fas fa-file-pdf"></i></a>` : '—'}</td>
+      <td><button class="btn btn-danger btn-sm btn-icon" onclick="delPay('${p.id}')"><i class="fas fa-trash"></i></button></td>
+    </tr>`; }).join('');
+}
+
+['paySearch','payLocFilter','payStatusFilter'].forEach(id => {
+  $( id)?.addEventListener('input', renderPays);
+  $(id)?.addEventListener('change', renderPays);
+});
+
+$('addPayBtn').addEventListener('click', () => {
+  const today = new Date().toISOString().split('T')[0];
+  openModal('Add Payment Record', `
+    <div class="grid-2">
+      <div class="field"><label>Date *</label><input type="date" id="pDate" value="${today}" /></div>
+      <div class="field"><label>Amount ₹ *</label><input type="number" id="pAmt" placeholder="500" min="0" /></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Donor Name *</label><input type="text" id="pName" placeholder="Ramesh Kumar" /></div>
+      <div class="field"><label>Email</label><input type="email" id="pEmail" placeholder="optional" /></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Phone</label><input type="tel" id="pPhone" placeholder="optional" /></div>
+      <div class="field"><label>Location</label>
+        <select id="pLoc">
+          <option value="">— Select —</option>
+          <option value="borooah">B. Borooah Cancer Hospital</option>
+          <option value="gmch">GMCH – Guwahati Medical College</option>
+          <option value="aiims">AIIMS Guwahati</option>
+          <option value="assam-flood-relief">Assam Flood Relief</option>
+          <option value="orphanage">Old Age Homes/Orphanage</option>
+          <option value="other">Other Locations</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Payment Method</label>
+        <select id="pMethod"><option>UPI</option><option>Card</option><option>Net Banking</option><option>Bank Transfer</option><option>Cash</option><option>Other</option></select>
+      </div>
+      <div class="field"><label>Status</label>
+        <select id="pStatus"><option>Success</option><option>Pending</option><option>Failed</option></select>
+      </div>
+    </div>
+    <div class="field"><label>Transaction ID</label><input type="text" id="pTxn" placeholder="Razorpay / UPI txn ID" /></div>
+    <div class="field"><label>Notes</label><textarea id="pNotes" rows="2" placeholder="Any notes…"></textarea></div>`,
+    `<button class="btn btn-outline" id="mCancel">Cancel</button>
+     <button class="btn btn-primary" id="mSave"><i class="fas fa-save"></i> Save Payment</button>`
+  );
+  $('mCancel').addEventListener('click', closeModal);
+  $('mSave').addEventListener('click', async () => {
+    const name = $('pName').value.trim(), amt = $('pAmt').value;
+    if (!name || !amt) { toast('Name and amount are required', 'err'); return; }
+    const rec = { date:$('pDate').value, name, email:$('pEmail').value.trim(), phone:$('pPhone').value.trim(), amount:parseFloat(amt), location:$('pLoc').value, method:$('pMethod').value, status:$('pStatus').value, txn_id:$('pTxn').value.trim(), notes:$('pNotes').value.trim() };
+    try {
+      await sb.from('donations').insert(rec);
+    } catch (err) {}
+    await loadPays(); closeModal(); toast('Payment saved!','ok');
+  });
+});
+
+async function delPay(id) {
+  if (!confirm('Delete this payment record?')) return;
+  try {
+    await sb.from('donations').delete().eq('id', id);
+  } catch (err) {}
+  await loadPays(); toast('Deleted','info');
+}
+
+$('exportCsvBtn').addEventListener('click', () => {
+  const pays = paysCache;
+  if (!pays.length) { toast('No payments to export', 'err'); return; }
+  const hdr = ['Date','Name','Email','Phone','Amount','Location','Method','Status','TxnID','Notes'];
+  const rows = pays.map(p => [p.date,p.name,p.email,p.phone,p.amount,LOCS[p.location]||p.location,p.method,p.status,p.txn_id,p.notes].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','));
+  const blob = new Blob([[hdr.join(','),...rows].join('\n')], {type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'pfc_payments.csv'; a.click();
+  toast('CSV exported!','ok');
+});
+
+/* ════════════════════════════════════════════
+   SETTINGS
+════════════════════════════════════════════ */
+$('changePwBtn').addEventListener('click', () => {
+  const c=$('curPw').value, n=$('newPw').value, cf=$('confPw').value;
+  if (c !== getPw()) { toast('Current password is wrong','err'); return; }
+  if (n.length < 6)  { toast('New password must be 6+ characters','err'); return; }
+  if (n !== cf)      { toast('Passwords do not match','err'); return; }
+  localStorage.setItem(LS.pw, n);
+  $('curPw').value=$('newPw').value=$('confPw').value='';
+  toast('Password updated!','ok');
+});
+
+async function clearData(sec) {
+  if (!confirm(`Clear ${sec==='all'?'ALL dashboard':sec} data? Cannot be undone.`)) return;
+  if (sec==='all'||sec==='gallery') {
+    try { await sb.from('gallery_entries').delete().neq('id', '00000000-0000-0000-0000-000000000000'); } catch (err) {}
+    if (typeof renderEntries === 'function' && $('sec-gallery')?.classList.contains('active')) renderEntries();
+  }
+  if (sec==='all'||sec==='donors')   localStorage.removeItem(LS.donors);
+  if (sec==='all'||sec==='payments') {
+    localStorage.removeItem(LS.pays);
+    try { await sb.from('donations').delete().neq('id', '00000000-0000-0000-0000-000000000000'); } catch (err) {}
+  }
+  if (sec==='all'||sec==='volunteers') {
+    localStorage.removeItem(LS.volunteers);
+    try { await sb.from('volunteers').delete().neq('id', '00000000-0000-0000-0000-000000000000'); } catch (err) {}
+  }
+  await Promise.all([loadPays(), loadVolunteers()]);
+  renderEntries(); renderDonors();
+  toast('Data cleared','info');
+}
+
+/* ════════════════════════════════════════════
+   MODAL
+════════════════════════════════════════════ */
+function openModal(title, body, foot) {
+  $('mTitle').textContent = title;
+  $('mBody').innerHTML = body;
+  $('mFoot').innerHTML = foot;
+  $('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => { const f=$('modal').querySelector('input,select,textarea'); if(f) f.focus(); }, 60);
+}
+function closeModal() { $('modal').classList.remove('open'); document.body.style.overflow=''; }
+$('mClose').addEventListener('click', closeModal);
+$('modal').addEventListener('click', e => { if(e.target===$('modal')) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+function openCodeModal(title, code, note) {
+  openModal(title,
+    `<div class="notice blue" style="margin-bottom:10px"><i class="fas fa-info-circle"></i><span>${note}</span></div>
+     <div class="code-block" id="codeBlock">${esc(code)}</div>`,
+    `<button class="btn btn-outline" id="mCancel">Close</button>
+     <button class="btn btn-primary" id="mSave"><i class="fas fa-copy"></i> Copy Code</button>`
+  );
+  $('mCancel').addEventListener('click', closeModal);
+  $('mSave').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(code); }
+    catch { const t=document.createElement('textarea');t.value=code;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove(); }
+    toast('Code copied!','ok');
+  });
+}
+
+/* ════════════════════════════════════════════
+   AUTO-LOGIN (runs last, after everything is defined)
+════════════════════════════════════════════ */
+if (lsGet(LS.auth)) {
+  $('loginScreen').style.display = 'none';
+  $('dashboard').style.display = 'flex';
+  boot();
+}
+</script>
+</body>
+</html>

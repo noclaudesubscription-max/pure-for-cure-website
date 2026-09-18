@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pure for Cure — Nourishing Lives, Nurturing Souls</title>
+  <meta name="description" content="Pure for Cure distributes freshly cooked, wholesome meals to underserved communities across India. Join us in our mission to ensure no one goes hungry." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       LOADER
+  ═══════════════════════════════════════════ -->
+  <div id="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">Pure for Cure</div>
+      <div class="loader-bar"><div class="loader-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       NAVIGATION
+  ═══════════════════════════════════════════ -->
+  <nav id="navbar">
+    <div class="nav-container">
+      <a href="#hero" class="nav-logo">
+        <img src="images/logo/pure-for-cure-logo.png" alt="Pure for Cure Logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+        <span class="logo-text-fallback">Pure for Cure</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#programs">Programs</a></li>
+        <li><a href="#impact">Impact</a></li>
+        <li><a href="#testimonials">Stories</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#seva-memories">Memories</a></li>
+        <li><a href="assam-flood-relief.html" class="nav-link-urgent"><span class="badge-dot"></span> Flood Relief</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="donate.html" class="btn btn-nav">Donate Now</a>
+      <button class="nav-hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-mobile">
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#programs">Programs</a></li>
+        <li><a href="#impact">Impact</a></li>
+        <li><a href="#testimonials">Stories</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#seva-memories">Memories</a></li>
+        <li><a href="assam-flood-relief.html" class="nav-link-urgent"><span class="badge-dot"></span> Flood Relief</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="donate.html" class="btn btn-primary">Donate Now</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       BANNER CAROUSEL
+       Content is rendered from banners-data.js —
+       edit that file to add/remove/reorder/replace
+       banners. Do not hardcode banner images here.
+  ═══════════════════════════════════════════ -->
+  <section id="banner-carousel" class="banner-carousel" aria-label="Campaign banners">
+    <div class="banner-nav-scrim"></div>
+    <div class="banner-track" id="bannerTrack"></div>
+    <button class="banner-arrow banner-arrow-prev" id="bannerPrev" aria-label="Previous banner"><i class="fas fa-chevron-left"></i></button>
+    <button class="banner-arrow banner-arrow-next" id="bannerNext" aria-label="Next banner"><i class="fas fa-chevron-right"></i></button>
+    <div class="banner-dots" id="bannerDots"></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════ -->
+  <section id="hero">
+    <div class="hero-bg">
+      <img src="images/FOR-SERVING-1.png" alt="" class="hero-bg-img" />
+      <div class="hero-overlay"></div>
+      <div class="hero-particles" id="particles"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge reveal-up" style="--delay:0.1s">
+        <span class="badge-dot"></span>
+        Serving Communities Across India
+      </div>
+      <h1 class="hero-title reveal-up" style="--delay:0.25s">
+        <span class="line">Nourishing Lives,</span>
+        <span class="line gradient-text">Nurturing Souls</span>
+      </h1>
+      <p class="hero-sub reveal-up" style="--delay:0.4s">
+        Distributing freshly cooked, sanctified meals to patients, caregivers,<br />
+        orphans, elders, and everyone in need — one plate at a time.
+      </p>
+      <div class="hero-ctas reveal-up" style="--delay:0.55s">
+        <a href="donate.html" class="btn btn-primary btn-lg">
+          <i class="fas fa-heart"></i> Donate a Meal
+        </a>
+        <a href="#programs" class="btn btn-ghost btn-lg">
+          Our Mission <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+      <div class="hero-stats reveal-up" style="--delay:0.7s">
+        <div class="hstat">
+          <span class="hstat-num hstat-num-lg" data-stat="meals">40,00,000</span><span>+</span>
+          <span class="hstat-label">Meals Served</span>
+        </div>
+        <div class="hstat-divider"></div>
+        <div class="hstat">
+          <span class="hstat-num" data-stat="locations">40</span><span>+</span>
+          <span class="hstat-label">Locations</span>
+        </div>
+        <div class="hstat-divider"></div>
+        <div class="hstat">
+          <span class="hstat-num" data-stat="days">3,000</span><span>+</span>
+          <span class="hstat-label">Days Active</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">
+      <span>Scroll to explore</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       MARQUEE STRIP
+  ═══════════════════════════════════════════ -->
+  <div class="marquee-strip">
+    <div class="marquee-track">
+      <span>Feeding at Hospitals</span>
+      <span class="marquee-dot">✦</span>
+      <span>Serving Orphanages</span>
+      <span class="marquee-dot">✦</span>
+      <span>Old Age Homes</span>
+      <span class="marquee-dot">✦</span>
+      <span>Slum Communities</span>
+      <span class="marquee-dot">✦</span>
+      <span>300–400 Meals Daily</span>
+      <span class="marquee-dot">✦</span>
+      <span>North Eastern India</span>
+      <span class="marquee-dot">✦</span>
+      <span>Prasadam Distribution</span>
+      <span class="marquee-dot">✦</span>
+      <span>Feeding at Hospitals</span>
+      <span class="marquee-dot">✦</span>
+      <span>Serving Orphanages</span>
+      <span class="marquee-dot">✦</span>
+      <span>Old Age Homes</span>
+      <span class="marquee-dot">✦</span>
+      <span>Slum Communities</span>
+      <span class="marquee-dot">✦</span>
+      <span>300–400 Meals Daily</span>
+      <span class="marquee-dot">✦</span>
+      <span>North Eastern India</span>
+      <span class="marquee-dot">✦</span>
+      <span>Prasadam Distribution</span>
+      <span class="marquee-dot">✦</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       ABOUT
+  ═══════════════════════════════════════════ -->
+  <section id="about" class="section">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-visual reveal-left">
+          <div class="about-img-stack">
+            <div class="about-img-card img-card-1">
+              <img src="images/BJK_6791-e1571715937923.jpg" alt="Volunteers distributing meals" onerror="this.parentElement.style.background='linear-gradient(135deg,#E8670A,#F5A623)'" />
+            </div>
+            <div class="about-img-card img-card-2">
+              <img src="images/BJK_6769-e1571715951338.jpg" alt="Meal preparation" onerror="this.parentElement.style.background='linear-gradient(135deg,#F5A623,#E8670A)'" />
+            </div>
+            <div class="about-quote-badge">
+              <i class="fas fa-quote-left"></i>
+              <p>"No one should go hungry"</p>
+              <span>— Srila Prabhupada</span>
+            </div>
+          </div>
+        </div>
+        <div class="about-text reveal-right">
+          <div class="section-label">Who We Are</div>
+          <h2 class="section-title">A Mission Born from<br /><em>Compassion & Faith</em></h2>
+          <p class="body-text">
+            Pure for Cure (PFC) was founded on the timeless vision of A.C. Bhaktivedanta Swami Prabhupada — Founder-Acharya of the Worldwide Hare Krishna Movement — whose directive was simple yet profound: <strong>"no one should go hungry."</strong>
+          </p>
+          <p class="body-text">
+            Based in Guwahati, Assam, we distribute freshly cooked, sanctified food (prasadam) to patients, caregivers, orphaned children, the elderly, and underserved communities across India's North Eastern region — and growing.
+          </p>
+          <div class="mission-vision-tabs">
+            <div class="mv-tab active" data-tab="mission">Mission</div>
+            <div class="mv-tab" data-tab="vision">Vision</div>
+          </div>
+          <div class="mv-content" id="mv-mission">
+            <p>"To offer pure, sanctified food (prasadam) with affection to patients, caregivers, underserved communities and everyone in need at hospitals, orphanages, old age homes, slums and wherever required — thereby addressing hunger and malnutrition while nurturing the spirit of selfless service."</p>
+          </div>
+          <div class="mv-content hidden" id="mv-vision">
+            <p>"To cultivate a compassionate and spiritually conscious society in which no individual is deprived of wholesome nourishment, and where acts of giving become an integral part of personal and collective celebration."</p>
+          </div>
+          <a href="#programs" class="btn btn-primary mt-4">See Our Programs</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       PROGRAMS
+  ═══════════════════════════════════════════ -->
+  <section id="programs" class="section section-dark">
+    <div class="container">
+      <div class="section-header reveal-up">
+        <div class="section-label light">What We Do</div>
+        <h2 class="section-title light">Our Feeding <em>Programs</em></h2>
+        <p class="section-sub">We go wherever hunger exists — hospitals, orphanages, old age homes, and slum communities.</p>
+      </div>
+      <div class="programs-grid">
+        <div class="program-card reveal-up" style="--delay:0s">
+          <div class="program-icon">
+            <i class="fas fa-hospital-user"></i>
+          </div>
+          <div class="program-num">01</div>
+          <h3>Hospital Feeding</h3>
+          <p>We serve freshly cooked, nutritious meals to patients and their caregivers in hospitals — offering nourishment when they need it most and reducing the burden on families.</p>
+          <div class="program-tag">Patients & Caregivers</div>
+        </div>
+        <div class="program-card reveal-up" style="--delay:0.1s">
+          <div class="program-icon">
+            <i class="fas fa-child"></i>
+          </div>
+          <div class="program-num">02</div>
+          <h3>Orphanage Feeding</h3>
+          <p>Children in orphanages receive wholesome, lovingly prepared prasadam — ensuring they grow with proper nutrition and the knowledge that they are cared for.</p>
+          <div class="program-tag">Children in Need</div>
+        </div>
+        <div class="program-card reveal-up" style="--delay:0.2s">
+          <div class="program-icon">
+            <i class="fas fa-hands-helping"></i>
+          </div>
+          <div class="program-num">03</div>
+          <h3>Elders & Communities</h3>
+          <p>From old age homes to urban slums, we reach the forgotten corners of our society with warm meals, dignity, and the assurance that no one is invisible to us.</p>
+          <div class="program-tag">Elders & Slum Communities</div>
+        </div>
+      </div>
+      <div class="kitchen-strip reveal-up">
+        <div class="ks-text">
+          <h3>Our Kitchen & Process</h3>
+          <p>Every meal is prepared in our dedicated kitchen following strict hygiene and quality standards. Each dish is offered (prasadam) before distribution — a spiritual practice that infuses the food with purity and intention.</p>
+        </div>
+        <a href="#gallery" class="btn btn-ghost-light">View Gallery <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       IMPACT STATS
+  ═══════════════════════════════════════════ -->
+  <section id="impact" class="section section-saffron">
+    <div class="container">
+      <div class="section-header reveal-up">
+        <div class="section-label">Our Impact</div>
+        <h2 class="section-title">Every Number is<br /><em>a Life Touched</em></h2>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card reveal-up" style="--delay:0s">
+          <div class="stat-icon"><i class="fas fa-utensils"></i></div>
+          <div class="stat-number stat-number-sm" data-stat="meals">40,00,000</div>
+          <div class="stat-suffix">+</div>
+          <div class="stat-label">Meals Served</div>
+          <div class="stat-desc">Freshly cooked plates delivered with love</div>
+        </div>
+        <div class="stat-card reveal-up" style="--delay:0.1s">
+          <div class="stat-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div class="stat-number" data-stat="locations">40</div>
+          <div class="stat-suffix">+</div>
+          <div class="stat-label">Locations</div>
+          <div class="stat-desc">Hospitals, orphanages & communities reached</div>
+        </div>
+        <div class="stat-card reveal-up" style="--delay:0.2s">
+          <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="stat-number" data-stat="days">3,000</div>
+          <div class="stat-suffix">+</div>
+          <div class="stat-label">Days Active</div>
+          <div class="stat-desc">Consistent service every single day</div>
+        </div>
+        <div class="stat-card reveal-up" style="--delay:0.3s">
+          <div class="stat-icon"><i class="fas fa-leaf"></i></div>
+          <div class="stat-number">400</div>
+          <div class="stat-suffix">+</div>
+          <div class="stat-label">Daily Meals</div>
+          <div class="stat-desc">Hot prasadam served every single day</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       FOUNDER
+  ═══════════════════════════════════════════ -->
+  <section id="founder" class="section">
+    <div class="container">
+      <div class="founder-grid">
+        <div class="founder-text reveal-left">
+          <div class="section-label">Our Inspiration</div>
+          <h2 class="section-title">Founded in the<br /><em>Spirit of Prabhupada</em></h2>
+          <p class="body-text">
+            A.C. Bhaktivedanta Swami Prabhupada — Founder-Acharya of the Worldwide Hare Krishna Movement — believed that spiritual practice must go hand-in-hand with social responsibility. His vision: that every temple should feed the hungry without discrimination.
+          </p>
+          <p class="body-text">
+            Pure for Cure is the living embodiment of that directive. Every meal we serve is an act of devotion — offered to the divine before reaching the hands of those in need.
+          </p>
+          <blockquote class="founder-quote">
+            <i class="fas fa-quote-left quote-icon"></i>
+            <p>"Feeding the needy is not charity, it is our social responsibility."</p>
+          </blockquote>
+        </div>
+        <div class="founder-visual reveal-right">
+          <div class="founder-card">
+            <div class="founder-img-wrap">
+              <img src="images/Prabhupada-Rund-pzyy29je2ohz2m1a4n34kusq01lsw7jgih7wkwe1fc.png" alt="A.C. Bhaktivedanta Swami Prabhupada" onerror="this.parentElement.style.background='linear-gradient(135deg,#E8670A22,#F5A62333)';this.style.display='none'" />
+            </div>
+            <div class="founder-card-text">
+              <h4>A.C. Bhaktivedanta Swami Prabhupada</h4>
+              <p>Founder-Acharya, Worldwide Hare Krishna Movement</p>
+              <div class="founder-mantra">"No one should go hungry"</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       TESTIMONIALS
+  ═══════════════════════════════════════════ -->
+  <section id="testimonials" class="section section-warm">
+    <div class="container">
+      <div class="section-header reveal-up">
+        <div class="section-label">Volunteer Stories</div>
+        <h2 class="section-title">Voices of <em>Selfless Service</em></h2>
+        <p class="section-sub">Our volunteers are the heart of Pure for Cure. Here's what the experience means to them.</p>
+      </div>
+      <div class="testimonials-wrapper">
+        <div class="testimonials-track" id="testimonialsTrack">
+          <div class="testimonial-card">
+            <div class="tcard-quote"><i class="fas fa-quote-left"></i></div>
+            <p>"It gives me immense pleasure to be a part of the Pure for Cure mission. Serving the needy through prasadam is not just feeding the body — it nourishes the soul."</p>
+            <div class="tcard-author">
+              <div class="author-avatar avatar-img">
+                <img src="images/vijay-gupta.jpg" alt="Vijay Gupta" />
+              </div>
+              <div>
+                <strong>Vijay Gupta</strong>
+                <span>Volunteer</span>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="tcard-quote"><i class="fas fa-quote-left"></i></div>
+            <p>"Service for Pure for Cure has taught me patience and the importance of Prasadam. I have learned that food given with love carries a different energy altogether."</p>
+            <div class="tcard-author">
+              <div class="author-avatar avatar-img">
+                <img src="images/WhatsApp-Image-2026-03-26-at-18.14.41-150x150.jpeg" alt="Sarita Biyani" />
+              </div>
+              <div>
+                <strong>Sarita Biyani</strong>
+                <span>Volunteer</span>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="tcard-quote"><i class="fas fa-quote-left"></i></div>
+            <p>"The Pure for Cure initiative has been able to generate a lot of enthusiasm among volunteers. We serve 300–400 meals on average and each one brings a smile."</p>
+            <div class="tcard-author">
+              <div class="author-avatar avatar-img">
+                <img src="images/vandana-goyal.jpg" alt="Vandana Goyal" />
+              </div>
+              <div>
+                <strong>Vandana Goyal</strong>
+                <span>Volunteer</span>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="tcard-quote"><i class="fas fa-quote-left"></i></div>
+            <p>"I have been working with this organisation for the past 15 years. The experience has been nothing short of a blessing — a daily reminder of what truly matters."</p>
+            <div class="tcard-author">
+              <div class="author-avatar avatar-img">
+                <img src="images/preeti-agarwal.jpg" alt="Preeti Agarwal" />
+              </div>
+              <div>
+                <strong>Preeti Agarwal</strong>
+                <span>Volunteer</span>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="tcard-quote"><i class="fas fa-quote-left"></i></div>
+            <p>"Bringing happiness through nutritious meals and divine grace — that is what we do here. Every plate is a prayer, and every smile is an answer."</p>
+            <div class="tcard-author">
+              <div class="author-avatar avatar-img">
+                <img src="images/suman-sharma.jpg" alt="Suman Sharma" />
+              </div>
+              <div>
+                <strong>Suman Sharma</strong>
+                <span>Volunteer</span>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="tcard-quote"><i class="fas fa-quote-left"></i></div>
+            <p>"This initiative completely changed me as a person. Feeding the needy is not charity — it is our social responsibility. I carry that truth with me every single day."</p>
+            <div class="tcard-author">
+              <div class="author-avatar avatar-img">
+                <img src="images/rupa-sharma.jpg" alt="Rupa Sharma" />
+              </div>
+              <div>
+                <strong>Rupa Sharma</strong>
+                <span>Volunteer</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonials-controls">
+          <button class="t-btn" id="tPrev"><i class="fas fa-arrow-left"></i></button>
+          <div class="t-dots" id="tDots"></div>
+          <button class="t-btn" id="tNext"><i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       GALLERY
+  ═══════════════════════════════════════════ -->
+  <section id="gallery" class="section">
+    <div class="container">
+      <div class="section-header reveal-up">
+        <div class="section-label">Gallery</div>
+        <h2 class="section-title">Capturing <em>Moments of Service</em></h2>
+        <p class="section-sub">Every photo tells the story of a meal given and a life touched.</p>
+      </div>
+      <div class="gallery-grid reveal-up" id="galleryGrid"></div>
+      <!-- Lightbox -->
+      <div id="lightbox" class="lightbox">
+        <div class="lightbox-overlay"></div>
+        <img id="lightboxImg" src="" alt="" />
+        <button class="lightbox-close"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SEVA MEMORIES
+  ═══════════════════════════════════════════ -->
+  <section id="seva-memories" class="section section-dark">
+    <div class="container">
+      <div class="section-header reveal-up">
+        <div class="section-label light">Donor Appreciation</div>
+        <h2 class="section-title light">Seva <em>Memories</em></h2>
+        <p class="section-sub light">
+          Every act of giving creates a memory worth cherishing forever. Select a location below to revisit your donation day — your photos and stories, dedicated just for you.
+        </p>
+      </div>
+
+      <div class="seva-intro-badge reveal-up">
+        <i class="fas fa-heart"></i>
+        <span>A private, dedicated space for our donors to revisit their moments of seva</span>
+      </div>
+
+      <!-- Cards are rendered from locations-data.js — edit that file to add/remove/reorder locations -->
+      <div class="seva-locations-grid" id="sevaLocationsGrid"></div>
+
+      <div class="seva-share-note reveal-up">
+        <i class="fas fa-paper-plane"></i>
+        <p>Your personal gallery link will be shared with you after your donation day. Each gallery is regularly updated as new donors join the mission — your memories will always be here waiting for you.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       DONATE
+  ═══════════════════════════════════════════ -->
+  <section id="donate" class="section section-dark">
+    <div class="container">
+      <div class="section-header reveal-up">
+        <div class="section-label light">Support the Mission</div>
+        <h2 class="section-title light">Your Gift Feeds <em>a Life</em></h2>
+        <p class="section-sub light">Every rupee goes directly into preparing and distributing meals. Choose how you'd like to give.</p>
+      </div>
+      <div class="donate-grid">
+        <!-- Quick amounts -->
+        <div class="donate-card reveal-up" style="--delay:0s">
+          <div class="dc-icon"><i class="fas fa-coins"></i></div>
+          <h3>Quick Donation</h3>
+          <p>Select an amount — you'll be taken to our secure donation page to complete your details and payment.</p>
+          <div class="amount-grid">
+            <button class="amount-btn" data-amount="800">₹800</button>
+            <button class="amount-btn active" data-amount="4000">₹4,000</button>
+            <button class="amount-btn" data-amount="8000">₹8,000</button>
+            <button class="amount-btn" data-amount="16000">₹16,000</button>
+          </div>
+          <div class="custom-amount">
+            <input type="number" placeholder="Enter custom amount" id="customAmount" />
+            <span>₹</span>
+          </div>
+          <div class="donate-plates-note" id="homePlatesNote">
+            <i class="fas fa-utensils"></i> ₹4,000 serves <strong id="homePlatesCount">50</strong> plates of prasadam
+          </div>
+          <a href="donate.html?amount=4000" id="goDonateBtn" class="btn btn-primary w-full">
+            <i class="fas fa-arrow-right"></i> Continue to Donate
+          </a>
+        </div>
+        <!-- Volunteer -->
+        <div class="donate-card reveal-up" style="--delay:0.1s">
+          <div class="dc-icon"><i class="fas fa-hands-praying"></i></div>
+          <h3>Give Your Time</h3>
+          <p>Can't donate money? Donate your time. We welcome volunteers in the kitchen, on distribution drives, and in logistics.</p>
+          <p style="margin-top:auto">Tell us how you'd like to help and our team will reach out to coordinate with you.</p>
+          <a href="donate.html?mode=volunteer" class="btn btn-primary w-full">
+            <i class="fas fa-hands-helping"></i> Register as Volunteer
+          </a>
+        </div>
+      </div>
+
+      <!-- Recent Donors -->
+      <div class="donors-strip reveal-up">
+        <div class="donors-label"><i class="fas fa-heart"></i> Recent Donors</div>
+        <div class="donors-list" id="donorsList">
+          <div class="donor-chip"><span>Harsh Kumar Giri</span> — ₹500</div>
+          <div class="donor-chip"><span>Santana Haloi</span> — ₹800</div>
+          <div class="donor-chip add-chip"><a href="donate.html"><i class="fas fa-plus"></i> Be the next</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       CONTACT
+  ═══════════════════════════════════════════ -->
+  <section id="contact" class="section">
+    <div class="container">
+      <div class="section-header reveal-up">
+        <div class="section-label">Get In Touch</div>
+        <h2 class="section-title">We'd Love to <em>Hear From You</em></h2>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info reveal-left">
+          <div class="contact-card">
+            <div class="ci-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div>
+              <h4>Our Location</h4>
+              <p>Hare Krishna Mandir Marg, Ghorajan, Near IIT Guwahati,<br />North Guwahati, Assam, India — PIN 781031</p>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="ci-icon"><i class="fas fa-phone"></i></div>
+            <div>
+              <h4>Call Us</h4>
+              <p><a href="tel:+919678007302">+91 96780 07302</a></p>
+              <p><a href="tel:+919678007305">+91 96780 07305</a></p>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="ci-icon"><i class="fas fa-envelope"></i></div>
+            <div>
+              <h4>Email Us</h4>
+              <p><a href="mailto:pureforcure@gmail.com">pureforcure@gmail.com</a></p>
+            </div>
+          </div>
+          <div class="social-links">
+            <a href="#" class="social-btn" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.youtube.com/channel/UC61074ljiPZCzdBZqIeb9zQ" class="social-btn" aria-label="YouTube" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+            <a href="https://www.instagram.com/pureforcureofficial?utm_source=qr&igsh=bW53MnpsNHcwMXo5" class="social-btn" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="contact-form-wrap reveal-right">
+          <form id="contactForm" class="contact-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>First Name</label>
+                <input type="text" placeholder="Ramesh" required />
+              </div>
+              <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" placeholder="Kumar" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" placeholder="ramesh@email.com" required />
+            </div>
+            <div class="form-group">
+              <label>Subject</label>
+              <input type="text" placeholder="How can we help?" />
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <textarea rows="5" placeholder="Your message..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-full">
+              <i class="fas fa-paper-plane"></i> Send Message
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════ -->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <span class="footer-logo-text">Pure for Cure</span>
+            <p>Distributing freshly cooked, sanctified meals to those in need</p>
+            <div class="social-links">
+              <a href="#" class="social-btn sm"><i class="fab fa-twitter"></i></a>
+              <a href="https://www.youtube.com/channel/UC61074ljiPZCzdBZqIeb9zQ" class="social-btn sm" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+              <a href="https://www.instagram.com/pureforcureofficial?utm_source=qr&igsh=bW53MnpsNHcwMXo5" class="social-btn sm" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+          <div class="footer-links">
+            <h5>Quick Links</h5>
+            <ul>
+              <li><a href="#about">About Us</a></li>
+              <li><a href="#programs">Programs</a></li>
+              <li><a href="#impact">Our Impact</a></li>
+              <li><a href="#testimonials">Volunteer Stories</a></li>
+              <li><a href="#gallery">Gallery</a></li>
+              <li><a href="#seva-memories">Seva Memories</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+          <div class="footer-links">
+            <h5>Get Involved</h5>
+            <ul>
+              <li><a href="donate.html">Donate Now</a></li>
+              <li><a href="donate.html?mode=volunteer">Volunteer</a></li>
+              <li><a href="donate.html?mode=volunteer">Corporate Partnership</a></li>
+              <li><a href="#contact">Media Room</a></li>
+            </ul>
+          </div>
+          <div class="footer-contact">
+            <h5>Contact</h5>
+            <p><i class="fas fa-map-marker-alt"></i> Near IIT Guwahati, North Guwahati, Assam 781031</p>
+            <p><i class="fas fa-phone"></i> +91 96780 07302</p>
+            <p><i class="fas fa-envelope"></i> pureforcure@gmail.com</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© 2024 Pure for Cure. All rights reserved. Inspired by the vision of Srila Prabhupada.</p>
+        <p>"No one should go hungry."</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button id="backToTop" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+
+  <script src="locations-data.js"></script>
+  <script src="main.js"></script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+
+  <!-- ═══════════════════════════════════════════
+       DASHBOARD SYNC
+       Loads recent donations from Supabase so the
+       Recent Donors strip auto-populates with real
+       donor names site-wide.
+  ═══════════════════════════════════════════ -->
+  <script>
+  (function() {
+
+    /* ── General Gallery (dashboard-managed via Supabase) ──
+       Fetches from the gallery_entries table (location='general') so
+       photos added/edited in the dashboard are live for every visitor.
+       Falls back to the original site photos if the fetch fails. Since
+       this is async, it may finish after main.js's DOMContentLoaded
+       lightbox binder — so we re-attach lightbox clicks ourselves. */
+    const DEFAULT_GALLERY_PHOTOS = [
+      { src: "images/BJK_6769-e1571715951338.jpg", alt: "Volunteers distributing meals", cls: "gi-tall" },
+      { src: "images/ae7e2c_b9c800e2cae94568a972924487798b2d_mv2.jpg", alt: "Community meal service" },
+      { src: "images/BJK_6761-e1571715971402.jpg", alt: "Serving the community" },
+      { src: "images/BJK_6791-e1571715937923.jpg", alt: "Group meal distribution", cls: "gi-wide" },
+      { src: "images/ae7e2c_c03af11d3f864b1d9e3010cf65c66959_mv2.jpg", alt: "Food preparation" },
+      { src: "images/ae7e2c_b59f3660af7645caa31f25a75344c860_mv2.jpg", alt: "Prasadam distribution" },
+      { src: "images/BJK_6755-e1571715988673.jpg", alt: "Hospital feeding program" },
+      { src: "images/BJK_6383-4-e1571716173694.jpg", alt: "Orphanage meal service" },
+      { src: "images/BJK_6444-6-e1571716072739.jpg", alt: "Volunteers in service" },
+      { src: "2b996d59-853a-47ba-a099-bdf5185f4f85.jpg", alt: "Pure for Cure stall at hospital", cls: "gi-wide" },
+      { src: "a4381732-1963-4979-9718-2051293f26d8.jpg", alt: "Volunteer preparing food" },
+      { src: "cb83f297-7284-4fc3-860e-f5717d10902e.jpg", alt: "Community eating at Pure for Cure" },
+    ];
+    function attachGalleryLightbox() {
+      const lb = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lightboxImg');
+      if (!lb || !lbImg) return;
+      document.querySelectorAll('#galleryGrid .gallery-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const img = item.querySelector('img');
+          if (!img) return;
+          lbImg.src = img.src; lbImg.alt = img.alt;
+          lb.classList.add('open'); document.body.style.overflow = 'hidden';
+        });
+      });
+    }
+    async function renderGeneralGallery() {
+      const el = document.getElementById('galleryGrid');
+      if (!el) return;
+      let photos = DEFAULT_GALLERY_PHOTOS;
+      try {
+        const { data, error } = await sb.from('gallery_entries')
+          .select('*').eq('location', 'general')
+          .order('sort_order', { ascending: true })
+          .order('created_at', { ascending: true });
+        if (error) throw error;
+        if (data && data.length) {
+          photos = data.map(p => ({ src: (p.photos && p.photos[0]) || '', alt: p.caption || 'Seva memory' }));
+        }
+      } catch (e) { /* offline or query failed — keep default photos */ }
+      el.innerHTML = photos.map(p => `
+        <div class="gallery-item${p.cls ? ' ' + p.cls : ''}">
+          <img src="${p.src}" alt="${(p.alt || 'Seva memory').replace(/"/g,'&quot;')}" loading="lazy" />
+          <div class="gallery-overlay"><i class="fas fa-expand"></i></div>
+        </div>`).join('');
+      attachGalleryLightbox();
+    }
+    renderGeneralGallery();
+
+    /* ── Recent Donors Strip ── */
+    function renderDonors(donors) {
+      const el = document.getElementById('donorsList');
+      if (!el) return;
+      donors = (donors || []).filter(d => Number(d.amount) >= 500);
+      if (!donors.length) return; // keep hardcoded HTML as fallback
+      el.innerHTML = donors.map(d =>
+        `<div class="donor-chip"><span>${d.name}</span> — ₹${Number(d.amount).toLocaleString('en-IN')}</div>`
+      ).join('') +
+      `<div class="donor-chip add-chip"><a href="donate.html"><i class="fas fa-plus"></i> Be the next</a></div>`;
+    }
+
+    async function loadDonors() {
+      try {
+        const { data, error } = await sb
+          .from('donations')
+          .select('name, amount')
+          .eq('status', 'Success')
+          .gte('amount', 500)
+          .order('created_at', { ascending: false })
+          .limit(6);
+        if (error) throw error;
+        renderDonors(data);
+      } catch (e) {
+        // Fallback to localStorage (legacy dashboard data)
+        try {
+          const raw = localStorage.getItem('pfc_recent_donors');
+          if (raw) renderDonors(JSON.parse(raw));
+        } catch(e2) {}
+      }
+    }
+
+    loadDonors();
+
+  })();
+  </script>
+</body>
+</html>

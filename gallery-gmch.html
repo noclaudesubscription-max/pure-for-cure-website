@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seva Memories — GMCH Guwahati Medical College | Pure for Cure</title>
+  <meta name="description" content="View your donation memories and photos from GMCH – Guwahati Medical College & Hospital. A dedicated gallery for Pure for Cure donors." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    html, body { background: #0F0A00; }
+    .gallery-page-section { background: var(--warm-white); }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav id="gallery-nav">
+    <div class="nav-container container">
+      <a href="index.html#seva-memories" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Seva Memories
+      </a>
+      <a href="index.html" style="margin-left:auto;font-family:var(--font-head);font-size:1.2rem;color:var(--gold);font-weight:700;text-decoration:none;letter-spacing:0.02em;">
+        Pure for Cure
+      </a>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <div class="gallery-page-hero">
+    <div class="container">
+      <div class="gallery-page-tag">
+        <i class="fas fa-hospital-user"></i> Government Medical College
+      </div>
+      <h1>GMCH – Guwahati Medical <em>College & Hospital</em></h1>
+      <p>Your seva reached hundreds of patients and caregivers at GMCH — one of Assam's largest and most important public hospitals. These are your memories.</p>
+      <div class="gallery-page-stats">
+        <div class="gp-stat">
+          <span class="gp-stat-num" id="photoCount">0</span>
+          <span class="gp-stat-label">Photos</span>
+        </div>
+        <div class="gp-stat-divider"></div>
+        <div class="gp-stat">
+          <span class="gp-stat-num" id="donorCount">0</span>
+          <span class="gp-stat-label">Donors</span>
+        </div>
+        <div class="gp-stat-divider"></div>
+        <div class="gp-stat">
+          <span class="gp-stat-num" id="dayCount">0</span>
+          <span class="gp-stat-label">Days of Seva</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GALLERY SECTION ── -->
+  <section class="gallery-page-section">
+    <div class="container">
+      <!-- Calendar navigation -->
+      <div class="cal-nav-wrap">
+        <div class="calendar-nav">
+          <span class="calendar-nav-label"><i class="fas fa-calendar-day"></i> Browse by Date</span>
+          <input type="date" id="calInput" />
+          <button class="cal-clear-btn" id="calClear"><i class="fas fa-list" style="margin-right:6px"></i>All Memories</button>
+          <span class="cal-result-info" id="calInfo"></span>
+        </div>
+      </div>
+      <div id="dateNav"></div>
+      <div id="galleryContainer"></div>
+      <div id="lightbox" class="lightbox">
+        <div class="lightbox-overlay"></div>
+        <img id="lightboxImg" src="" alt="" />
+        <button class="lightbox-close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="seva-thankyou" id="thankYouBanner" style="display:none">
+        <i class="fas fa-heart"></i>
+        <h3>Thank You for Your Seva</h3>
+        <p>Every meal served at Guwahati Medical College & Hospital carries your name, your love, and your prayer. We are grateful for your generosity.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer id="footer">
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© 2024 Pure for Cure. All rights reserved.</p>
+        <p>"No one should go hungry." — Srila Prabhupada</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+  const LOCATION = "GMCH – Guwahati Medical College & Hospital";
+  const LOC_SLUG = "gmch";
+
+  const FALLBACK_DONATIONS = [
+    // ── used only if the database is unreachable ──
+    {
+      name: "Sample Donor — Placeholder",
+      date: "Recent Seva Day",
+      photos: [
+        "images/BJK_6769-e1571715951338.jpg",
+        "images/ae7e2c_b9c800e2cae94568a972924487798b2d_mv2.jpg",
+        "images/ae7e2c_b59f3660af7645caa31f25a75344c860_mv2.jpg"
+      ]
+    },
+  ];
+  const donations = [];
+
+  /* ════ ENGINE ════ */
+  const $ = id => document.getElementById(id);
+  const makeid = d => 'donor-' + (d.name + '-' + d.date).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  let byDate = {}, dates = [];
+
+  function donorCard(donor) {
+    const id       = makeid(donor);
+    const initials = (donor.initials || donor.name.split(' ').map(w=>w[0]).join('')).slice(0,2).toUpperCase();
+    const grid     = donor.photos.map((src,i) =>
+      `<div class="gallery-item${i===0 && donor.photos.length>3?' gi-wide':''}">
+         <img src="${src}" alt="Seva memory — ${donor.name}" loading="lazy"/>
+         <div class="gallery-overlay"><i class="fas fa-expand"></i></div>
+       </div>`
+    ).join('');
+    return `
+      <div class="donor-entry" id="${id}" style="scroll-margin-top:90px">
+        <div class="donor-entry-header">
+          <div class="donor-entry-avatar">${initials}</div>
+          <div class="donor-entry-info"><h4>${donor.name}</h4><span>${LOCATION}</span></div>
+          <span class="donor-entry-date"><i class="fas fa-calendar-day" style="margin-right:5px"></i>${donor.date}</span>
+        </div>
+        <div class="gp-gallery-grid">${grid}</div>
+      </div>`;
+  }
+
+  function render(filterDate) {
+    const list = filterDate === 'all' ? donations : (byDate[filterDate] || []);
+    $('galleryContainer').innerHTML = list.length === 0
+      ? `<div class="seva-empty"><div class="seva-empty-icon"><i class="fas fa-images"></i></div><h3>No memories for this day yet</h3><p>Photos for this date will appear here once uploaded.</p><span class="seva-empty-note"><i class="fas fa-clock"></i> Check back soon</span></div>`
+      : list.map(donorCard).join('');
+    attachLightbox();
+  }
+
+  function setupDateNav() {
+    if (dates.length > 1) {
+      const tabs = ['all',...dates].map(d =>
+        `<button class="date-tab${d==='all'?' active':''}" data-date="${d}">${d==='all'?'<i class="fas fa-layer-group" style="margin-right:5px"></i>All Days':d}</button>`
+      ).join('');
+      $('dateNav').innerHTML = `<div class="date-nav-wrap"><div class="date-nav-label"><i class="fas fa-calendar-alt"></i> Browse by Day</div><div class="date-tabs">${tabs}</div></div>`;
+      $('dateNav').addEventListener('click', e => {
+        const btn = e.target.closest('.date-tab');
+        if (!btn) return;
+        document.querySelectorAll('.date-tab').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active'); render(btn.dataset.date);
+      });
+    }
+  }
+
+  function attachLightbox() {
+    const lb = $('lightbox'), lbImg = $('lightboxImg');
+    document.querySelectorAll('.gallery-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const img = item.querySelector('img'); if (!img) return;
+        lbImg.src = img.src; lbImg.alt = img.alt;
+        lb.classList.add('open'); document.body.style.overflow = 'hidden';
+      });
+    });
+    const close = () => { lb.classList.remove('open'); document.body.style.overflow = ''; };
+    document.querySelector('.lightbox-close')?.addEventListener('click', close);
+    document.querySelector('.lightbox-overlay')?.addEventListener('click', close);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  }
+
+  function setupCalendar() {
+    const calInput = $('calInput'), calInfo = $('calInfo');
+    const today = new Date().toISOString().split('T')[0];
+    calInput.max = today;
+    function fmtDate(iso) { return new Date(iso+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}); }
+    function syncTabs(a) { document.querySelectorAll('.date-tab').forEach(t=>t.classList.toggle('active',t.dataset.date===a)); }
+    function applyCalFilter(iso) {
+      if (!iso) { render('all'); calInfo.textContent=''; syncTabs('all'); return; }
+      const matched = donations.filter(d=>d.dateISO===iso);
+      if (matched.length===0) {
+        $('galleryContainer').innerHTML=`<div class="seva-empty"><div class="seva-empty-icon"><i class="fas fa-calendar-times"></i></div><h3>No memories for ${fmtDate(iso)}</h3><p>No seva photos for this date yet. Click <strong>All Memories</strong> to see everything.</p><span class="seva-empty-note"><i class="fas fa-clock"></i> Galleries updated after each seva event</span></div>`;
+        calInfo.textContent='No entries for this date';
+      } else {
+        $('galleryContainer').innerHTML=matched.map(donorCard).join('');
+        calInfo.textContent=matched.length+' entr'+(matched.length===1?'y':'ies')+' found';
+        attachLightbox();
+      }
+      syncTabs('');
+    }
+    calInput.addEventListener('change',()=>applyCalFilter(calInput.value));
+    $('calClear').addEventListener('click',()=>{ calInput.value=''; applyCalFilter(''); });
+    if (donations.some(d=>d.dateISO===today)) { calInput.value=today; applyCalFilter(today); }
+    else { calInput.value=today; calInfo.textContent='No entries for today — showing all'; }
+  }
+
+  function scrollToHash() {
+    if (!location.hash) return;
+    setTimeout(() => {
+      const el = document.querySelector(location.hash);
+      if (el) {
+        el.scrollIntoView({ behavior:'smooth', block:'start' });
+        el.style.outline = '2px solid var(--saffron)'; el.style.outlineOffset = '6px'; el.style.borderRadius = 'var(--radius)';
+        setTimeout(() => { el.style.outline = ''; el.style.outlineOffset = ''; }, 3000);
+      }
+    }, 600);
+  }
+
+  function initGallery(list) {
+    donations.push(...list);
+    byDate = {};
+    donations.forEach(d => { (byDate[d.date] = byDate[d.date] || []).push(d); });
+    dates = Object.keys(byDate);
+
+    $('photoCount').textContent = donations.reduce((s,d) => s + d.photos.length, 0);
+    $('donorCount').textContent = donations.length;
+    $('dayCount').textContent   = dates.length;
+    if (donations.length > 0) $('thankYouBanner').style.display = '';
+
+    setupDateNav();
+    render('all');
+
+    if (donations.length === 0) {
+      $('galleryContainer').innerHTML = `<div class="seva-empty"><div class="seva-empty-icon"><i class="fas fa-images"></i></div><h3>More Memories on the Way</h3><p>Photos from your donation day at GMCH – Guwahati Medical College & Hospital will be uploaded here and shared with you personally.</p><span class="seva-empty-note"><i class="fas fa-clock"></i> This gallery is updated after each seva event</span></div>`;
+    }
+
+    setupCalendar();
+    scrollToHash();
+  }
+
+  // ── LOAD FROM SUPABASE (live for every visitor) ──
+  (async function() {
+    let list = FALLBACK_DONATIONS;
+    try {
+      const { data, error } = await sb.from('gallery_entries')
+        .select('*').eq('location', LOC_SLUG)
+        .order('sort_order', { ascending: true })
+        .order('created_at', { ascending: true });
+      if (error) throw error;
+      if (data && data.length) {
+        list = data.map(e => ({
+          name: e.name, initials: e.initials || '',
+          date: e.date_label || 'Date not set', dateISO: e.date_iso || '',
+          location: e.specific_location || '', photos: e.photos || []
+        }));
+      }
+    } catch (err) { /* offline or query failed — fall back to placeholder */ }
+    initGallery(list);
+  })();
+  </script>
+
+</body>
+</html>

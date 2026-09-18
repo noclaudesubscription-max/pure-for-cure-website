@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donate | Pure for Cure</title>
+  <meta name="description" content="Make a donation to Pure for Cure or register as a volunteer. Every rupee goes directly into preparing and distributing meals." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    html, body { background: #0F0A00; }
+    .gallery-page-section { background: var(--warm-white); }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav id="gallery-nav">
+    <div class="nav-container container">
+      <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </a>
+      <a href="index.html" style="margin-left:auto;font-family:var(--font-head);font-size:1.2rem;color:var(--gold);font-weight:700;text-decoration:none;letter-spacing:0.02em;">
+        Pure for Cure
+      </a>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <div class="gallery-page-hero">
+    <div class="container">
+      <div class="gallery-page-tag">
+        <i class="fas fa-heart"></i> Support the Mission
+      </div>
+      <h1>Your Gift Feeds <em>a Life</em></h1>
+      <p>Every rupee goes directly into preparing and distributing meals. Choose how you'd like to give — your generosity reaches those who need it most.</p>
+    </div>
+  </div>
+
+  <!-- ── DONATE / VOLUNTEER SECTION ── -->
+  <section class="gallery-page-section">
+    <div class="container">
+
+      <div class="donate-tabs" id="donateTabs">
+        <button class="donate-tab active" data-tab="donate"><i class="fas fa-coins"></i> Make a Donation</button>
+        <button class="donate-tab" data-tab="volunteer"><i class="fas fa-hands-praying"></i> Volunteer</button>
+      </div>
+
+      <!-- ═══ DONATE PANEL ═══ -->
+      <div class="donate-panel" id="panel-donate">
+        <div class="donate-page-grid">
+
+          <!-- Amount selection -->
+          <div class="donate-page-card">
+            <h3><i class="fas fa-coins"></i> Select Amount</h3>
+            <p class="donate-page-note">Each plate costs <strong>₹80</strong>. Choose how many you'd like to serve.</p>
+            <div class="amount-grid light">
+              <button class="amount-btn light" data-amount="80">₹80<br><small>1 plate</small></button>
+              <button class="amount-btn light" data-amount="800">₹800<br><small>10 plates</small></button>
+              <button class="amount-btn light" data-amount="4000">₹4,000<br><small>50 plates</small></button>
+              <button class="amount-btn light" data-amount="8000">₹8,000<br><small>100 plates</small></button>
+              <button class="amount-btn light" data-amount="16000">₹16,000<br><small>200 plates</small></button>
+              <button class="amount-btn light" data-amount="custom" id="amtOtherBtn">Other<br><small>custom</small></button>
+            </div>
+            <div class="custom-amount light" id="customAmountWrap" style="display:none">
+              <input type="number" min="1" placeholder="Enter amount" id="customAmount" />
+              <span>₹</span>
+            </div>
+            <div class="donate-plates-note" id="platesNote" style="display:none"></div>
+            <div class="donate-summary" id="donateSummary" style="display:none">
+              <span>Your donation</span>
+              <strong id="summaryAmount"></strong>
+            </div>
+          </div>
+
+          <!-- Donor details -->
+          <div class="donate-page-card">
+            <h3><i class="fas fa-user"></i> Your Details</h3>
+            <p class="donate-page-note">Fill in your details — you'll be redirected to our secure Razorpay payment page to complete the transaction.</p>
+            <form id="donateForm" class="contact-form">
+              <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="donorName" placeholder="RAMESH KUMAR" required style="text-transform:uppercase" />
+              </div>
+              <div class="form-group">
+                <label>WhatsApp Number *</label>
+                <input type="tel" id="donorPhone" placeholder="+91 98765 43210" required />
+              </div>
+              <div class="form-group">
+                <label>Email Address *</label>
+                <input type="email" id="donorEmail" placeholder="ramesh@email.com" required />
+              </div>
+              <div class="form-group">
+                <label>Postal Address *</label>
+                <textarea id="donorAddress" rows="3" placeholder="House no., Street, City, State, PIN code" required style="resize:vertical"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Select Location *</label>
+                <select id="donorLocation" required>
+                  <option value="" disabled selected>Choose where your donation should go</option>
+                  <option value="borooah">B. Barooah Cancer Institute</option>
+                  <option value="gmch">Guwahati Medical College &amp; Hospital</option>
+                  <option value="aiims">AIIMS, Guwahati</option>
+                  <option value="assam-flood-relief">Assam Flood Relief</option>
+                  <option value="orphanage">Old Age Homes/Orphanage</option>
+                  <option value="other">Your choice</option>
+                </select>
+              </div>
+              <div class="form-group" id="donorLocationOtherWrap" style="display:none">
+                <label>Preferred Location</label>
+                <input type="text" id="donorLocationOther" placeholder="Tell us where you'd like your donation to go" />
+              </div>
+              <div class="form-group">
+                <label>PAN Number <span style="font-weight:400;color:var(--text-muted)">(optional — for 80G tax receipt)</span></label>
+                <input type="text" id="donorPan" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase" />
+              </div>
+              <button type="submit" class="btn btn-primary w-full btn-lg" id="payBtn">
+                <i class="fas fa-lock"></i> Proceed to Pay <span id="payBtnAmount">₹2,500</span>
+              </button>
+              <p class="donate-secure-note"><i class="fas fa-shield-alt"></i> Secured by Razorpay — your details are never stored on our server.</p>
+            </form>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ═══ VOLUNTEER PANEL ═══ -->
+      <div class="donate-panel" id="panel-volunteer" style="display:none">
+        <div class="donate-page-card donate-page-card-wide">
+          <h3><i class="fas fa-hands-praying"></i> Give Your Time</h3>
+          <p class="donate-page-note">Can't donate money? Donate your time. We welcome volunteers in the kitchen, on distribution drives, and in logistics. Fill out the form below and our team will reach out to coordinate with you.</p>
+          <form id="volunteerForm" class="contact-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="volName" placeholder="Your full name" required />
+              </div>
+              <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" id="volPhone" placeholder="Phone number" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="volEmail" placeholder="Email address" required />
+            </div>
+            <div class="form-group">
+              <label>I want to help with...</label>
+              <select id="volArea">
+                <option value="">Select an area</option>
+                <option>Kitchen preparation</option>
+                <option>Meal distribution</option>
+                <option>Fundraising</option>
+                <option>Social media / Outreach</option>
+                <option>Corporate Partnership</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Message (optional)</label>
+              <textarea id="volMessage" rows="4" placeholder="Tell us a bit about yourself and your availability..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-full btn-lg">
+              <i class="fas fa-hands-helping"></i> Register as Volunteer
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer id="footer">
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© 2024 Pure for Cure. All rights reserved.</p>
+        <p>"No one should go hungry." — Srila Prabhupada</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Razorpay Checkout -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+
+  <!-- EmailJS (sends donation receipt email; admin copy via Bcc set in the EmailJS template) -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <!-- pdf-lib (builds the personalized donation receipt PDF in-browser) -->
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+  <script>
+  const $ = id => document.getElementById(id);
+
+  /* ════════════════════════════════════════════
+     RAZORPAY CONFIG
+     Only the public Key ID belongs in client-side code.
+     NEVER put your Key Secret in this file or anywhere
+     in the website's source — it must stay on a server.
+     The Key Secret is only needed if/when you add a
+     backend to create orders and verify payment
+     signatures. This client-only setup (no order_id)
+     works for basic Razorpay Checkout payments.
+  ═══════════════════════════════════════════════ */
+  const RAZORPAY_KEY_ID = 'rzp_live_ysKJLc5VAgvM7W';
+
+  /* ════════════════════════════════════════════
+     EMAILJS CONFIG
+     Public Key only — safe for client-side use.
+     Fill these in from your EmailJS dashboard:
+     emailjs.com > Account > General (public key)
+     emailjs.com > Email Services (service ID)
+     emailjs.com > Email Templates (template ID)
+  ═══════════════════════════════════════════════ */
+  const EMAILJS_PUBLIC_KEY = '7rlSIRoybWU_Exkf9';
+  const EMAILJS_SERVICE_ID = 'service_ssdg1kh';
+  const EMAILJS_TEMPLATE_ID = 'template_uk3p639';
+  if (window.emailjs && EMAILJS_PUBLIC_KEY.indexOf('YOUR_') !== 0) {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  }
+
+  /* ════════════════════════════════════════════
+     DONATION RECEIPT PDF
+     Recreates the Pure for Cure / HKM Guwahati
+     80G donation receipt layout with pdf-lib,
+     filled in with the actual donor's details.
+  ═══════════════════════════════════════════════ */
+  async function generateReceiptPdf(donor, meta) {
+    const { PDFDocument, rgb, StandardFonts } = PDFLib;
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([612, 792]); // US Letter
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const navy = rgb(0.04, 0.15, 0.45);
+    const black = rgb(0.1, 0.1, 0.1);
+    let y = 740;
+
+    try {
+      const logoBytes = await fetch('images/pur-for-cure-logo-clean.jpg').then(r => r.arrayBuffer());
+      const logoImg = await pdfDoc.embedJpg(logoBytes);
+      const dims = logoImg.scaleToFit(110, 44);
+      page.drawImage(logoImg, { x: 50, y: y - 30, width: dims.width, height: dims.height });
+    } catch (e) {}
+
+    page.drawText('PURE FOR CURE', { x: 350, y: y + 10, size: 18, font: bold, color: navy });
+    page.drawText('(Serving the mission of His Divine Grace A.C. Bhaktivedanta Swami Prabhupada)', { x: 200, y: y - 6, size: 7, font, color: black });
+    y -= 55;
+    page.drawText('Ref. No.: ' + meta.refNo, { x: 50, y, size: 10, font: bold, color: black });
+    page.drawText('Date: ' + meta.dateStr, { x: 420, y, size: 10, font: bold, color: black });
+    y -= 45;
+    page.drawText('DONATION RECEIPT', { x: 170, y, size: 26, font: bold, color: navy });
+    y -= 35;
+    page.drawText('This is to acknowledge that PURE FOR CURE, GUWAHATI has received a contribution of', { x: 50, y, size: 10, font, color: black });
+    y -= 55;
+    page.drawRectangle({ x: 180, y: y - 10, width: 250, height: 45, borderColor: navy, borderWidth: 1.5 });
+    page.drawText('Rs. ' + Number(donor.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 }), { x: 220, y: y + 5, size: 22, font: bold, color: navy });
+    y -= 60;
+
+    const col = (label, value, x) => {
+      page.drawText(label, { x, y, size: 9, font: bold, color: black });
+      page.drawText(String(value || ''), { x, y: y - 13, size: 9, font, color: black });
+    };
+    const wrapText = (text, f, size, maxWidth) => {
+      const words = String(text || '').split(' ');
+      const lines = [];
+      let line = '';
+      words.forEach(word => {
+        const test = line ? line + ' ' + word : word;
+        if (f.widthOfTextAtSize(test, size) > maxWidth && line) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = test;
+        }
+      });
+      if (line) lines.push(line);
+      return lines;
+    };
+
+    col('Donor Name', donor.name, 50);
+    col('WhatsApp No.', donor.phone, 230);
+    col('Towards', 'Pure for Cure-Satvik Food Distribution', 380);
+    y -= 35;
+    page.drawText('Address', { x: 50, y, size: 9, font: bold, color: black });
+    const addressLines = wrapText(donor.address, font, 9, 290).slice(0, 2);
+    addressLines.forEach((line, i) => {
+      page.drawText(line, { x: 50, y: y - 13 - i * 12, size: 9, font, color: black });
+    });
+    y -= 13 + (addressLines.length - 1) * 12 + 22;
+    col('Email ID', donor.email, 50);
+    col('PAN', donor.pan, 230);
+    y -= 45;
+    page.drawText('Payment Mode', { x: 380, y, size: 9, font: bold, color: black });
+    page.drawText('Razorpay (Card/UPI/NetBanking)', { x: 380, y: y - 13, size: 9, font, color: black });
+    page.drawText('Txn ID: ' + meta.txnId, { x: 380, y: y - 26, size: 8, font, color: black });
+    y -= 60;
+    page.drawText('Thank you for your generous support', { x: 190, y, size: 11, font, color: black });
+    y -= 45;
+    page.drawText('Donations to this institution are exempted u/s 80G Vide', { x: 50, y, size: 8, font, color: black });
+    page.drawText('14/80G/CIT/GHY-II/2011-12/4701-05 DTD:29/02/2012', { x: 50, y: y - 11, size: 8, font, color: black });
+    page.drawText('PAN: AAATH8807J', { x: 50, y: y - 22, size: 8, font, color: black });
+    try {
+      const sigBytes = await fetch('images/signature-janardan-dasa.png').then(r => r.arrayBuffer());
+      const sigImg = await pdfDoc.embedPng(sigBytes);
+      const sigDims = sigImg.scaleToFit(80, 35);
+      page.drawImage(sigImg, { x: 440, y: y + 2, width: sigDims.width, height: sigDims.height });
+    } catch (e) {}
+    page.drawText('Janardan Dasa', { x: 440, y: y - 22, size: 10, font: bold, color: black });
+    page.drawText('President', { x: 440, y: y - 34, size: 9, font, color: black });
+
+    y = 90;
+    page.drawLine({ start: { x: 50, y: y + 10 }, end: { x: 562, y: y + 10 }, thickness: 0.5, color: black });
+    col('Contact', '+917099039770', 50);
+    col('Email', 'info@hkmguwahati.org', 220);
+    col('Address', 'Hare Krishna Mandir Road, Ghorajan, Guwahati 781031, Assam', 380);
+
+    const bytes = await pdfDoc.save();
+    return new Blob([bytes], { type: 'application/pdf' });
+  }
+
+  /* ── Tabs ── */
+  const tabs = $('donateTabs');
+  function showTab(tab) {
+    document.querySelectorAll('.donate-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    $('panel-donate').style.display = tab === 'donate' ? '' : 'none';
+    $('panel-volunteer').style.display = tab === 'volunteer' ? '' : 'none';
+  }
+  tabs.addEventListener('click', e => {
+    const btn = e.target.closest('.donate-tab');
+    if (!btn) return;
+    showTab(btn.dataset.tab);
+    history.replaceState(null, '', '?mode=' + btn.dataset.tab);
+  });
+
+  /* ── Amount selection ── */
+  const PLATE_COST = 80;
+  let selectedAmount = 0;
+  function fmt(n) { return '₹' + Number(n).toLocaleString('en-IN'); }
+  function platesFor(amt) {
+    const p = amt / PLATE_COST;
+    return Number.isInteger(p) ? p.toLocaleString('en-IN') : p.toFixed(1);
+  }
+  function updateAmountUI() {
+    if (selectedAmount > 0) {
+      $('payBtnAmount').textContent = fmt(selectedAmount);
+      $('summaryAmount').textContent = fmt(selectedAmount);
+      $('donateSummary').style.display = '';
+      const p = platesFor(selectedAmount);
+      const plural = p === '1' ? 'plate' : 'plates';
+      $('platesNote').innerHTML = `<i class="fas fa-utensils"></i> Your donation serves <strong id="platesCount">${p}</strong> ${plural} of prasadam`;
+      $('platesNote').style.display = '';
+    } else {
+      $('payBtnAmount').textContent = '';
+      $('donateSummary').style.display = 'none';
+      $('platesNote').style.display = 'none';
+      $('platesNote').innerHTML = '';
+    }
+  }
+
+  document.querySelectorAll('.amount-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (btn.dataset.amount === 'custom') {
+        $('customAmountWrap').style.display = '';
+        $('customAmount').focus();
+        const val = Number($('customAmount').value);
+        selectedAmount = val > 0 ? val : 0;
+        updateAmountUI();
+      } else {
+        $('customAmountWrap').style.display = 'none';
+        selectedAmount = Number(btn.dataset.amount);
+        updateAmountUI();
+      }
+    });
+  });
+
+  $('customAmount').addEventListener('input', e => {
+    const val = Number(e.target.value);
+    selectedAmount = val > 0 ? val : 0;
+    updateAmountUI();
+  });
+
+  /* ── Location selection ── */
+  $('donorLocation').addEventListener('change', e => {
+    const isOther = e.target.value === 'other';
+    $('donorLocationOtherWrap').style.display = isOther ? '' : 'none';
+    $('donorLocationOther').required = isOther;
+  });
+
+  /* ── Pre-fill from query params (?amount=4000 / ?mode=volunteer / ?location=assam-flood-relief) ── */
+  (function() {
+    const params = new URLSearchParams(location.search);
+    const amt = Number(params.get('amount'));
+    if (amt > 0) {
+      selectedAmount = amt;
+      const match = [...document.querySelectorAll('.amount-btn')].find(b => Number(b.dataset.amount) === amt);
+      document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+      if (match) {
+        match.classList.add('active');
+      } else {
+        $('amtOtherBtn').classList.add('active');
+        $('customAmountWrap').style.display = '';
+        $('customAmount').value = amt;
+      }
+      updateAmountUI();
+    } else {
+      updateAmountUI();
+    }
+    if (params.get('mode') === 'volunteer') showTab('volunteer');
+    const loc = params.get('location');
+    if (loc) {
+      const locSelect = $('donorLocation');
+      const hasOption = [...locSelect.options].some(o => o.value === loc);
+      if (hasOption) {
+        locSelect.value = loc;
+        locSelect.dispatchEvent(new Event('change'));
+      }
+    }
+  })();
+
+  /* ── Donation form submit → Razorpay ── */
+  $('donateForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (selectedAmount < 1) { alert('Please select or enter a valid donation amount.'); return; }
+
+    const pan = ($('donorPan').value.trim()).toUpperCase();
+    const location = $('donorLocation').value;
+    const locationOther = $('donorLocationOther').value.trim();
+    const donor = {
+      name: $('donorName').value.trim().toUpperCase(),
+      email: $('donorEmail').value.trim(),
+      phone: $('donorPhone').value.trim(),
+      address: $('donorAddress').value.trim(),
+      pan,
+      location,
+      locationOther,
+      amount: selectedAmount
+    };
+
+    const options = {
+      key: RAZORPAY_KEY_ID,
+      amount: selectedAmount * 100, // paise
+      currency: 'INR',
+      name: 'Pure for Cure',
+      description: 'Donation towards meal distribution',
+      prefill: {
+        name: donor.name,
+        email: donor.email,
+        contact: donor.phone
+      },
+      notes: {
+        address: donor.address,
+        pan: donor.pan || ''
+      },
+      theme: { color: '#e8670a' },
+      handler: async function(response) {
+        const txnId = response.razorpay_payment_id || '';
+        const dateStr = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+        const refNo = 'PFC-DR-' + new Date().toISOString().slice(0,7).replace('-','') + '-' + txnId.slice(-6).toUpperCase();
+
+        let receiptUrl = '';
+        try {
+          const pdfBlob = await generateReceiptPdf(donor, { dateStr, txnId, refNo });
+          const fileName = 'Donation-Receipt-' + refNo + '.pdf';
+          const { error: upErr } = await sb.storage.from('receipts').upload(fileName, pdfBlob, { contentType: 'application/pdf' });
+          if (!upErr) {
+            receiptUrl = sb.storage.from('receipts').getPublicUrl(fileName).data.publicUrl;
+          }
+        } catch (err) {}
+
+        const notesParts = [
+          donor.address,
+          donor.pan ? 'PAN: ' + donor.pan : '',
+          (donor.location === 'other' && donor.locationOther) ? 'Preferred Location: ' + donor.locationOther : '',
+          receiptUrl ? 'Receipt: ' + receiptUrl : ''
+        ].filter(Boolean);
+        try {
+          await sb.from('donations').insert({
+            date: new Date().toISOString().split('T')[0],
+            name: donor.name,
+            email: donor.email,
+            phone: donor.phone,
+            amount: donor.amount,
+            location: donor.location || '',
+            method: 'Razorpay',
+            status: 'Success',
+            txn_id: txnId,
+            notes: notesParts.join('\n')
+          });
+        } catch (err) {}
+
+        if (window.emailjs && EMAILJS_PUBLIC_KEY.indexOf('YOUR_') !== 0) {
+          try {
+            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+              donor_name: donor.name,
+              donor_email: donor.email,
+              amount: Number(donor.amount).toLocaleString('en-IN'),
+              txn_id: txnId,
+              date: dateStr,
+              receipt_url: receiptUrl
+            });
+          } catch (err) {}
+        }
+
+        alert('Thank you, ' + (donor.name || 'friend') + '! Your donation of ' + fmt(donor.amount) + ' was successful.');
+        window.location.href = 'index.html#seva-memories';
+      },
+      modal: {
+        ondismiss: function() {}
+      }
+    };
+
+    if (!RAZORPAY_KEY_ID || RAZORPAY_KEY_ID.indexOf('YOUR_KEY_ID') !== -1) {
+      alert('Razorpay is not configured yet. Add your Razorpay Key ID in donate.html (RAZORPAY_KEY_ID) to enable live payments.\n\nDonation amount: ' + fmt(selectedAmount) + '\nName: ' + donor.name);
+      return;
+    }
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+  });
+
+  /* ── Volunteer form submit ── */
+  $('volunteerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const vol = {
+      name: $('volName').value.trim(),
+      email: $('volEmail').value.trim(),
+      phone: $('volPhone').value.trim(),
+      area: $('volArea').value,
+      message: $('volMessage').value.trim(),
+      date: new Date().toISOString().split('T')[0]
+    };
+    try {
+      await sb.from('volunteers').insert(vol);
+    } catch (err) {}
+
+    const btn = e.target.querySelector('button[type="submit"]');
+    const original = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check"></i> Registered! We\'ll reach out soon.';
+    btn.style.background = '#16a34a';
+    e.target.reset();
+    setTimeout(() => { btn.innerHTML = original; btn.style.background = ''; }, 4000);
+  });
+  </script>
+
+</body>
+</html>
